@@ -3,7 +3,11 @@
 import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 
-export default function D3Background() {
+interface D3BackgroundProps {
+  theme?: string;
+}
+
+export default function D3Background({ theme = 'dark' }: D3BackgroundProps) {
   const d3Container = useRef<SVGSVGElement | null>(null);
 
   useEffect(() => {
@@ -34,7 +38,7 @@ export default function D3Background() {
       .attr('cx', d => d.x)
       .attr('cy', d => d.y)
       .attr('r', d => d.r)
-      .attr('fill', '#00FF41')
+      .attr('fill', theme === 'light' ? '#a855f7' : '#00FF41') // purple-500 for light mode
       .attr('opacity', d => d.opacity);
 
     const timer = d3.timer(() => {

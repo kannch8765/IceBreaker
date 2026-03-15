@@ -3,19 +3,14 @@
 @tailwind utilities;
 
 :root {
-  --background: #fdfcff;
-  --foreground: #1c192b;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #000000;
-    --foreground: #00FF41;
-  }
+  /* Lilac fusion (Light Mode) */
+  --background: #f3e8ff; /* pastel lilac/purple background */
+  --foreground: #1c192b; /* dark text */
 }
 
 /* Explicitly support the .dark class */
 .dark {
+  /* Black and Green fusion (Dark Mode / Hall) */
   --background: #000000;
   --foreground: #00FF41;
 }

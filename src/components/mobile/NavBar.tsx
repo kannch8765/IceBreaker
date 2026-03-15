@@ -1,16 +1,14 @@
 "use client";
 import React from 'react';
-import { useOnboardingStore, Language, Theme } from '@/context/OnboardingContext';
-import { Moon, Sun, Globe } from 'lucide-react';
+import { useOnboardingStore, Language } from '@/context/OnboardingContext';
+import { Globe } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ThemeToggle } from '@/components/ui/ThemeToggle';
 
 export function NavBar() {
-  const { language, setLanguage, theme, setTheme } = useOnboardingStore();
+  const { language, setLanguage } = useOnboardingStore();
   const [isLangOpen, setIsLangOpen] = React.useState(false);
 
-  const toggleTheme = () => {
-    setTheme(theme === 'light' ? 'dark' : 'light');
-  };
 
   const selectLanguage = (lang: Language) => {
     setLanguage(lang);
@@ -48,16 +46,7 @@ export function NavBar() {
       </div>
 
       {/* Theme Toggle */}
-      <button 
-        onClick={toggleTheme}
-        className="p-2 bg-white/50 dark:bg-gray-800/50 backdrop-blur-md rounded-full shadow-sm hover:bg-white/80 dark:hover:bg-gray-800/80 transition-colors border border-white/40 dark:border-gray-700/50"
-      >
-        {theme === 'light' ? (
-           <Moon size={18} className="text-indigo-600" />
-        ) : (
-           <Sun size={18} className="text-yellow-400" />
-        )}
-      </button>
+      <ThemeToggle />
     </div>
   );
 }

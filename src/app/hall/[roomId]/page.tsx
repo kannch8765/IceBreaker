@@ -8,8 +8,11 @@ import { useRoomParticipants, useRoomState } from '@/hooks/useRoomParticipants';
 import { closeRoom, startRoomSession } from '@/lib/room';
 import D3Background from '@/components/hall/D3Background';
 import { Loader2 } from 'lucide-react';
+import { ThemeToggle } from '@/components/ui/ThemeToggle';
+import { useTheme } from '@/hooks/useTheme';
 
 export default function HallLobbyPage() {
+  const { theme } = useTheme();
   const params = useParams();
   const router = useRouter();
   const roomId = params.roomId as string; // Wait: in recent Next.js, params is wrapped in a Promise in some contexts, but usually OK as `useParams` for client components
@@ -53,9 +56,12 @@ export default function HallLobbyPage() {
   }
 
   return (
-    <div className="relative min-h-screen bg-black text-white overflow-hidden">
-      <D3Background />
-      <div className="absolute inset-0 bg-black/50 z-0 backdrop-blur-sm"></div>
+    <div className="relative min-h-screen bg-background text-foreground overflow-hidden transition-colors duration-500">
+      <div className="absolute top-4 right-4 z-50">
+        <ThemeToggle />
+      </div>
+      <D3Background theme={theme} />
+      <div className="absolute inset-0 bg-white/40 dark:bg-black/50 z-0 backdrop-blur-sm transition-colors duration-500"></div>
 
       <div className="relative z-10 container mx-auto px-8 py-12 flex flex-col lg:flex-row min-h-screen gap-12">
         
@@ -64,10 +70,10 @@ export default function HallLobbyPage() {
           <motion.div 
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
-            className="bg-black/60 backdrop-blur-xl border border-[#00FF41]/20 p-12 rounded-3xl shadow-[0_0_40px_rgba(0,255,65,0.1)] flex flex-col items-center gap-8 w-full max-w-md"
+            className="bg-white/60 dark:bg-black/60 backdrop-blur-xl border border-purple-500/20 dark:border-[#00FF41]/20 p-12 rounded-3xl shadow-[0_0_40px_rgba(147,51,234,0.1)] dark:shadow-[0_0_40px_rgba(0,255,65,0.1)] flex flex-col items-center gap-8 w-full max-w-md transition-colors duration-500"
           >
-            <h2 className="text-2xl font-bold tracking-widest text-[#00FF41] uppercase flex items-center gap-3">
-              <span className="w-2 h-2 rounded-full bg-[#00FF41] animate-pulse"></span>
+            <h2 className="text-2xl font-bold tracking-widest text-purple-600 dark:text-[#00FF41] uppercase flex items-center gap-3">
+              <span className="w-2 h-2 rounded-full bg-purple-600 dark:bg-[#00FF41] animate-pulse"></span>
               Lobby Active
             </h2>
             <div className="bg-white p-6 rounded-3xl">
@@ -80,8 +86,8 @@ export default function HallLobbyPage() {
               />
             </div>
             <div className="text-center space-y-2">
-              <p className="text-gray-400 font-medium">Join securely at icebreaker.app with code:</p>
-              <p className="text-6xl font-black text-white tracking-[0.2em]">{roomId}</p>
+              <p className="text-gray-600 dark:text-gray-400 font-medium transition-colors">Join securely at icebreaker.app with code:</p>
+              <p className="text-6xl font-black text-gray-900 dark:text-white tracking-[0.2em] transition-colors">{roomId}</p>
             </div>
           </motion.div>
           
@@ -94,7 +100,7 @@ export default function HallLobbyPage() {
           >
             <button 
               onClick={handleStart}
-              className="flex-1 py-4 bg-[#00FF41] text-black font-bold text-lg rounded-2xl hover:bg-white hover:text-black transition-all shadow-[0_0_20px_rgba(0,255,65,0.3)]"
+              className="flex-1 py-4 bg-purple-600 dark:bg-[#00FF41] text-white dark:text-black font-bold text-lg rounded-2xl hover:bg-purple-700 dark:hover:bg-white hover:text-white dark:hover:text-black transition-all shadow-[0_0_20px_rgba(147,51,234,0.3)] dark:shadow-[0_0_20px_rgba(0,255,65,0.3)]"
             >
               Start Session
             </button>
@@ -115,10 +121,10 @@ export default function HallLobbyPage() {
             animate={{ opacity: 1 }}
             className="mb-10 text-center lg:text-left"
           >
-            <h3 className="text-7xl font-black mb-4 tracking-tighter">
-              <span className="text-[#00FF41]">{participants.length}</span> Connected
+            <h3 className="text-7xl font-black mb-4 tracking-tighter transition-colors">
+              <span className="text-purple-600 dark:text-[#00FF41] transition-colors">{participants.length}</span> Connected
             </h3>
-            <p className="text-gray-400 text-2xl font-light">Network ready for initialization...</p>
+            <p className="text-gray-600 dark:text-gray-400 text-2xl font-light transition-colors">Network ready for initialization...</p>
           </motion.div>
 
           {/* Participant Grid */}
@@ -132,16 +138,16 @@ export default function HallLobbyPage() {
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.8 }}
                     transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                    className="bg-gray-900/50 backdrop-blur-md border border-gray-800 py-5 px-6 rounded-2xl flex items-center gap-4 hover:border-[#00FF41]/50 transition-colors"
+                    className="bg-white/60 dark:bg-gray-900/50 backdrop-blur-md border border-gray-200 dark:border-gray-800 py-5 px-6 rounded-2xl flex items-center gap-4 hover:border-purple-500/50 dark:hover:border-[#00FF41]/50 transition-colors"
                   >
-                     <div className="w-3 h-3 rounded-full bg-[#00FF41] shadow-[0_0_10px_#00FF41] animate-pulse"></div>
-                     <span className="font-semibold text-lg text-gray-200 truncate">{p.username || 'Anonymous'}</span>
+                     <div className="w-3 h-3 rounded-full bg-purple-500 dark:bg-[#00FF41] shadow-[0_0_10px_purple] dark:shadow-[0_0_10px_#00FF41] animate-pulse"></div>
+                     <span className="font-semibold text-lg text-gray-800 dark:text-gray-200 truncate">{p.username || 'Anonymous'}</span>
                   </motion.div>
                 ))}
               </AnimatePresence>
             </div>
             {participants.length === 0 && (
-              <div className="h-48 flex flex-col items-center justify-center text-gray-500/50 italic border-2 border-dashed border-gray-800/50 rounded-3xl mt-4">
+              <div className="h-48 flex flex-col items-center justify-center text-gray-400 dark:text-gray-500/50 italic border-2 border-dashed border-gray-300 dark:border-gray-800/50 rounded-3xl mt-4 transition-colors">
                 <p className="text-xl">Awaiting connections</p>
               </div>
             )}

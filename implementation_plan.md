@@ -1,68 +1,35 @@
-# Implementation Plan: Mobile Onboarding UI (Phase 1)
+# Implementation Plan: Mobile UI Refinement & Language (Phase 1.5)
 
 ## 1. Goal
-Build a high-fidelity, interactive mobile onboarding flow with the **"Lilac Fusion" aesthetic** and custom **Framer Motion transitions**. This phase uses **mock data** to ensure a **"Frontend First" approach** before connecting to Google Cloud.
+Refine the onboarding UI to include global controls (Language/Theme) and finalize the "Name Card" layout with match avatars and multi-language support.
 
-## 2. Aesthetic & Motion Specs
-- **Theme:** Light Mode / Lilac Fusion (Apple-inspired).
-- **Components:** `rounded-3xl` cards with soft shadows.
-- **Transitions:**
-  - **Exit:** `x: -100, opacity: 0` (Fly out left).
-  - **Enter:** `y: -50, type: "spring", bounce: 0.4` (Drop and bounce).
+## 2. New Components & Global UI
+- **NavBar:** Top-right overlay containing:
+  - **Theme Toggle:** Switch between Lilac Fusion and Black/Green fusion.
+  - **Language Selector:** Dropdown for EN / JP / CN.
+- **The Match Row:** A horizontal list of matched user avatars at the bottom of the final Name Card.
 
 ## 3. Step-by-Step Tasks
 
-### Step 1: Project Initialization
-- Install dependencies: `framer-motion`, `lucide-react`, and `clsx` for Tailwind merging.
-- Setup a basic **Layout component** that handles the Lilac gradient background.
+### Step 1: Global State for UI
+- Add **language** and **theme** to your state management (`useOnboardingStore`).
+- Create a simple dictionary for UI strings.
 
-### Step 2: State Management (Mock)
-Create a `useOnboardingStore` hook (or simple React state) to track:
-- `step` (current screen index).
-- `formData` (username, pronoun, mood, answers).
+Example structure:
+```ts
+const dictionary = {
+  next: { en: "Next", jp: "次へ", cn: "下一步" },
+  back: { en: "Back", jp: "戻る", cn: "返回" }
+}
+```
 
-### Step 3: View 1 - Identity
-- a placeholer icon
-- Input field for **Username**.
-- Select/Input for **Pronouns**.
-- **"Next" button** with hover scaling.
+### Step 2: Refined Result Card (View 5)
+- **Match Section:** Add a line of text (e.g., *"People you should meet:"*) followed by **2–3 small circular icons** (`rounded-full`).
+- **Icon Layout:** Reorganize the card to ensure the **Nano-Banana icon**, **user info**, and **ice-breakers** are spaced elegantly.
 
-### Step 4: View 2 - Mood & Vibe
+### Step 3: Motion Integration for Language Switch
+- When a user changes language, apply a **quick fade-out → fade-in animation** to the text so the change feels smooth rather than abrupt.
 
-- **Initial Choice Screen:**  
-  Display two large selectable icons positioned left and right:
-  - **Camera icon**
-  - **Mood icon**
-
-- **Hover Interaction:**  
-  When hovering over the icons, show temporary helper text:
-  - Camera → **"Take a Photo"**
-  - Mood → **"What's your mood today?"**
-
-- **Selection Animation:**  
-  When one option is clicked:
-  - The selected icon **shakes slightly**, then **expands**.
-  - The interface transitions into the corresponding page.
-
-- **Mood Page:**  
-  - Display **6 mood emoji options**.
-  - Each emoji is wrapped in a **small rounded card design** (`rounded-xl` or similar).
-  - When hovering over an emoji, show the **text label describing the mood**.
-
-- **Photo Page:**  
-  - Trigger the **device camera**.
-  - Show a simple camera capture interface for taking a photo.
-
-### Step 5: View 3 - Random Questions
-- Display **two randomized prompt cards** (e.g., "What's your secret talent?").
-- Input fields for each.
-
-### Step 6: View 4 - Waiting / Processing
-- A **"Brand New Hello World" loading animation** using a pulsing lilac circle.
-- Simulate a **2-second delay** to mimic AI processing.
-
-### Step 7: View 5 - The Result Card (Mock)
-A **"Name Card" component** displaying:
-- A **placeholder animal icon** (for the future Nano-Banana integration).
-- **User info**.
-- **2 mock ice-breaking topics**.
+### Step 4: Dark/Light Mode Styling
+- Update Tailwind classes to use the **`dark:` variant**.
+- **Dark Mode Palette:** `#000000` background with `#00FF41` (Matrix/DataCamp green) accents.

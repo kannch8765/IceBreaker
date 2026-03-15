@@ -9,9 +9,15 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0e17;
-    --foreground: #ededed;
+    --background: #000000;
+    --foreground: #00FF41;
   }
+}
+
+/* Explicitly support the .dark class */
+.dark {
+  --background: #000000;
+  --foreground: #00FF41;
 }
 
 body {

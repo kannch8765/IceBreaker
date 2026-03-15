@@ -5,7 +5,7 @@ import { StepWrapper } from '@/components/motion/StepWrapper';
 import { motion } from 'framer-motion';
 
 export function ProcessingStep() {
-  const { nextStep } = useOnboardingStore();
+  const { nextStep, t, language } = useOnboardingStore();
 
   useEffect(() => {
     // Simulate a 2-second delay for AI processing
@@ -35,16 +35,18 @@ export function ProcessingStep() {
           </div>
         </div>
 
-        <motion.h2
-          animate={{ opacity: [0.5, 1, 0.5] }}
-          transition={{ duration: 1.5, repeat: Infinity }}
-          className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2"
-        >
-          Analyzing Profile...
-        </motion.h2>
-        <p className="text-gray-500 dark:text-gray-400 text-sm">
-          Generating personalized ice breakers.
-        </p>
+        <motion.div key={`text-${language}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center">
+          <motion.h2
+            animate={{ opacity: [0.5, 1, 0.5] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+            className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2"
+          >
+            {t('analyzingProfile')}
+          </motion.h2>
+          <p className="text-gray-500 dark:text-gray-400 text-sm">
+            {t('generatingIceBreakers')}
+          </p>
+        </motion.div>
       </div>
     </StepWrapper>
   );

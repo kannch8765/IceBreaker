@@ -14,7 +14,7 @@ const ALL_PROMPTS = [
 ];
 
 export function QuestionsStep() {
-  const { formData, updateFormData, nextStep, prevStep } = useOnboardingStore();
+  const { formData, updateFormData, nextStep, prevStep, t, language } = useOnboardingStore();
   const [prompts, setPrompts] = useState<string[]>([]);
   
   useEffect(() => {
@@ -41,14 +41,15 @@ export function QuestionsStep() {
         <Sparkles size={32} className="text-indigo-400 dark:text-indigo-300" />
       </div>
 
-      <h2 className="text-2xl font-bold mb-2 text-center text-gray-800 dark:text-gray-100">
-        Let's break the ice
-      </h2>
-      <p className="text-sm text-gray-500 dark:text-gray-400 mb-8 text-center">
-        These help others get to know you better.
-      </p>
+      <motion.div key={`text-${language}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col w-full items-center">
+        <h2 className="text-2xl font-bold mb-2 text-center text-gray-800 dark:text-gray-100">
+          {t('breakIce')}
+        </h2>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mb-8 text-center">
+          {t('helpOthersKnow')}
+        </p>
 
-      {prompts.length > 0 && (
+        {prompts.length > 0 && (
         <div className="w-full space-y-6 mb-8">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -93,8 +94,9 @@ export function QuestionsStep() {
         disabled={!isComplete}
         className={!isComplete ? "opacity-50 cursor-not-allowed from-gray-400 to-gray-500" : ""}
       >
-        Generate My Card
+        {t('generateCard')}
       </Button>
+      </motion.div>
     </StepWrapper>
   );
 }

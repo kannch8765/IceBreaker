@@ -52,3 +52,9 @@
   - **Exit:** Previous cards/elements should fly out to the left or fade/dim out.
   - **Enter:** New elements should drop from the top with a slight elastic bounce before settling.
 - **Variety:** Blend different motion types (slide, scale, opacity) seamlessly so the UI feels alive, not repetitive.
+
+## 10. Cloud & Real-time Architecture
+- **Room Lifecycle:** A Host creates a room (Web view), generating a unique `roomId`. The room document in Firestore tracks the global state (`waiting`, `active`, `matching`).
+- **Participant Sync:** - Mobile users join a room and create a `participant` document in a sub-collection of the room.
+  - State changes (e.g., AI generating a question) are written by the backend and synced to the mobile frontend via real-time listeners.
+- **Data Cleanup:** All room data and participant records are transient and should be flagged for deletion once the session is terminated.

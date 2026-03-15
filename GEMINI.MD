@@ -42,8 +42,8 @@
 - **src/lib:** Helper functions for the matching algorithm and D3.js data joins.
 
 ## 8. Aesthetic Guidelines (Dual Theme)
-- **Dark Mode (Primary/Hall Screen):** Use a Black and Green fusion palette (inspired by DataCamp/Trae). Backgrounds should be deep black with glowing green accents for the network graph.
-- **Light Mode (User/Mobile):** Use a Lilac fusion palette (inspired by the Apple "Hello" screen). Soft gradients and airy backgrounds.
+- **Dark Mode:** Use a Black and Green fusion palette (inspired by DataCamp/Trae). Backgrounds should be deep black with glowing green accents for the network graph.
+- **Light Mode:** Use a Lilac fusion palette (inspired by the Apple "Hello" screen). Soft gradients and airy backgrounds.
 - **Card Style:** All display elements must use rounded edges (e.g., `rounded-2xl` or `rounded-3xl` in Tailwind) to maintain a modern, friendly feel.
 
 ## 9. Motion & Transitions (Framer Motion)

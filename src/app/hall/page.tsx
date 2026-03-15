@@ -35,7 +35,7 @@ export default function HallLandingPage() {
       <motion.div
         className="absolute inset-0 z-0 pointer-events-none opacity-20"
         style={{
-          background: theme === 'light' 
+          backgroundImage: theme === 'light' 
             ? 'linear-gradient(to bottom, transparent 50%, rgba(139, 92, 246, 0.15) 51%, transparent 51%)'
             : 'linear-gradient(to bottom, transparent 50%, rgba(0, 255, 65, 0.1) 51%, transparent 51%)',
           backgroundSize: '100% 4px',

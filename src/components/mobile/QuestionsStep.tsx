@@ -13,8 +13,11 @@ const ALL_PROMPTS = [
   "What's the best piece of advice you've ever been given?"
 ];
 
+import { useParticipant } from '@/hooks/useParticipant';
+
 export function QuestionsStep() {
-  const { formData, updateFormData, nextStep, prevStep, t, language } = useOnboardingStore();
+  const { formData, updateFormData, nextStep, prevStep, t, language, roomId } = useOnboardingStore();
+  const { createParticipant, loading: isSubmitting, error: submitError } = useParticipant();
   const [prompts, setPrompts] = useState<string[]>([]);
   
   useEffect(() => {
@@ -22,6 +25,14 @@ export function QuestionsStep() {
     const shuffled = [...ALL_PROMPTS].sort(() => 0.5 - Math.random());
     setPrompts(shuffled.slice(0, 2));
   }, []);
+
+  const handleNext = async () => {
+    if (!roomId) return;
+    const id = await createParticipant();
+    if (id) {
+      nextStep();
+    }
+  };
 
   const handleAnswerChange = (index: number, value: string) => {
     const newAnswers = [...formData.answers];
@@ -89,12 +100,16 @@ export function QuestionsStep() {
         </div>
       )}
 
+      {submitError && (
+        <p className="text-red-500 text-xs mb-4 text-center">{submitError}</p>
+      )}
+
       <Button
-        onClick={nextStep}
-        disabled={!isComplete}
-        className={!isComplete ? "opacity-50 cursor-not-allowed from-gray-400 to-gray-500" : ""}
+        onClick={handleNext}
+        disabled={!isComplete || isSubmitting || !roomId}
+        className={!isComplete || isSubmitting || !roomId ? "opacity-50 cursor-not-allowed from-gray-400 to-gray-500" : ""}
       >
-        {t('generateCard')}
+        {isSubmitting ? "Connecting..." : t('generateCard')}
       </Button>
       </motion.div>
     </StepWrapper>

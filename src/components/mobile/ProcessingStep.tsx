@@ -4,16 +4,17 @@ import { useOnboardingStore } from '@/context/OnboardingContext';
 import { StepWrapper } from '@/components/motion/StepWrapper';
 import { motion } from 'framer-motion';
 
+import { useParticipant } from '@/hooks/useParticipant';
+
 export function ProcessingStep() {
   const { nextStep, t, language } = useOnboardingStore();
+  const { status, error } = useParticipant();
 
   useEffect(() => {
-    // Simulate a 2-second delay for AI processing
-    const timer = setTimeout(() => {
+    if (status === 'ready') {
       nextStep();
-    }, 2000);
-    return () => clearTimeout(timer);
-  }, [nextStep]);
+    }
+  }, [status, nextStep]);
 
   return (
     <StepWrapper>
@@ -44,7 +45,11 @@ export function ProcessingStep() {
             {t('analyzingProfile')}
           </motion.h2>
           <p className="text-gray-500 dark:text-gray-400 text-sm">
-            {t('generatingIceBreakers')}
+            {error ? (
+              <span className="text-red-500 font-medium">{error}</span>
+            ) : (
+              t('generatingIceBreakers')
+            )}
           </p>
         </motion.div>
       </div>

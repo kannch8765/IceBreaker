@@ -1,6 +1,6 @@
 "use client";
 import React, { createContext, useContext, useState, useEffect } from 'react';
-
+import { useSearchParams } from 'next/navigation';
 import { TRANSLATIONS, TranslationKey } from '@/lib/translations';
 
 export type Language = 'en' | 'jp' | 'cn';
@@ -25,11 +25,27 @@ type OnboardingContextType = {
   theme: Theme;
   setTheme: (theme: Theme) => void;
   t: (key: TranslationKey) => string;
+  roomId: string | null;
+  participantId: string | null;
+  setParticipantId: (id: string | null) => void;
+  aiTopics: string[];
+  setAiTopics: (topics: string[]) => void;
+  avatarUrl: string | null;
+  setAvatarUrl: (url: string | null) => void;
 };
 
 const OnboardingContext = createContext<OnboardingContextType | undefined>(undefined);
 
 export function OnboardingProvider({ children }: { children: React.ReactNode }) {
+  const searchParams = useSearchParams();
+  const [roomId, setRoomId] = useState<string | null>(null);
+  
+  useEffect(() => {
+    if (searchParams) {
+      setRoomId(searchParams.get('room'));
+    }
+  }, [searchParams]);
+
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState<FormData>({
     username: '',
@@ -39,6 +55,9 @@ export function OnboardingProvider({ children }: { children: React.ReactNode }) 
   });
   const [language, setLanguage] = useState<Language>('en');
   const [theme, setTheme] = useState<Theme>('light');
+  const [participantId, setParticipantId] = useState<string | null>(null);
+  const [aiTopics, setAiTopics] = useState<string[]>([]);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
 
   // Sync theme with HTML document class
   useEffect(() => {
@@ -65,7 +84,11 @@ export function OnboardingProvider({ children }: { children: React.ReactNode }) 
       formData, updateFormData,
       language, setLanguage,
       theme, setTheme,
-      t
+      t,
+      roomId,
+      participantId, setParticipantId,
+      aiTopics, setAiTopics,
+      avatarUrl, setAvatarUrl
     }}>
       {children}
     </OnboardingContext.Provider>

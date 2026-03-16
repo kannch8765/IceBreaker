@@ -6,12 +6,7 @@ import { CheckCircle, Share2, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 
 export function ResultStep() {
-  const { formData, t, language } = useOnboardingStore();
-
-  const MOCK_TOPICS = [
-    `Ask ${formData.username || "them"} about their secret talent!`,
-    `Discuss what makes them feel ${formData.mood || "chill"} today.`
-  ];
+  const { formData, t, language, aiTopics, avatarUrl } = useOnboardingStore();
 
   return (
     <motion.div
@@ -32,9 +27,12 @@ export function ResultStep() {
         
         {/* Card Header (Avatar + Name) */}
         <div className="p-8 pb-6 flex flex-col items-center bg-gradient-to-b from-purple-100/50 to-transparent dark:from-purple-900/20">
-          <div className="w-32 h-32 rounded-full bg-gradient-to-tr from-purple-400 to-indigo-400 shadow-xl flex items-center justify-center mb-6 border-4 border-white dark:border-gray-800 text-6xl shadow-purple-200 dark:shadow-none">
-            {/* Placeholder Animal Icon */}
-            🦊
+          <div className="w-32 h-32 rounded-full bg-gradient-to-tr from-purple-400 to-indigo-400 shadow-xl flex items-center justify-center mb-6 border-4 border-white dark:border-gray-800 text-6xl shadow-purple-200 dark:shadow-none overflow-hidden">
+            {avatarUrl ? (
+              <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+            ) : (
+              "🦊"
+            )}
           </div>
           
           <h2 className="text-3xl font-extrabold text-gray-800 dark:text-gray-100 tracking-tight">
@@ -57,13 +55,15 @@ export function ResultStep() {
             <h3 className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-2">
               <MessageCircle size={14} /> {t('aiIceBreakers')}
             </h3>
-            {MOCK_TOPICS.map((topic, i) => (
+            {aiTopics.length > 0 ? aiTopics.map((topic, i) => (
               <div key={i} className="p-4 rounded-2xl bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800/30 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
                 <p className="text-sm text-indigo-900 dark:text-indigo-200 font-medium leading-relaxed">
                   {topic}
                 </p>
               </div>
-            ))}
+            )) : (
+              <p className="text-xs text-gray-400 italic">No topics generated.</p>
+            )}
           </div>
 
           {/* New Match Section */}

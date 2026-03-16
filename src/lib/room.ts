@@ -54,13 +54,21 @@ export async function closeRoom(roomId: string): Promise<void> {
 
   try {
     await runTransaction(db, async (transaction) => {
+      // 1. PERFORM ALL READS FIRST
       const roomDoc = await transaction.get(roomRef);
-      if (!roomDoc.exists()) {
-         return; // already gone
-      }
-      transaction.delete(roomRef);
-
       const statsDoc = await transaction.get(statsRef);
+
+      if (!roomDoc.exists()) {
+         return; // already gone or closed
+      }
+
+      // 2. PERFORM ALL WRITES
+      // Update status to "closed" instead of deleting to avoid crashing active listeners
+      transaction.update(roomRef, { 
+        status: "closed",
+        closedAt: Timestamp.now()
+      });
+
       if (statsDoc.exists()) {
          const activeRooms = statsDoc.data().activeRooms || 1;
          transaction.update(statsRef, { activeRooms: Math.max(0, activeRooms - 1) });

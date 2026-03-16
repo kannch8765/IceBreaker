@@ -62,9 +62,12 @@ export function useParticipant() {
     
     // 30 second timeout as requested
     const timeoutId = setTimeout(() => {
-      if (status !== 'ready') {
-        setError("AI generation timed out. Please try again or contact support.");
-      }
+      // We check the status locally without making it a dependency of the effect
+      // to avoid unnecessary listener churn.
+      setError(prevError => {
+        // Only set timeout error if no other error exists and status isn't ready
+        return prevError === null ? "AI generation timed out. Please try again or contact support." : prevError;
+      });
     }, 30000);
 
     const unsubscribe = onSnapshot(participantRef, (docSnap) => {
@@ -93,7 +96,7 @@ export function useParticipant() {
       unsubscribe();
       clearTimeout(timeoutId);
     };
-  }, [roomId, participantId, status, setAiTopics, setAvatarUrl]);
+  }, [roomId, participantId, setAiTopics, setAvatarUrl]); // status removed from deps
 
   return { createParticipant, loading, error, status };
 }

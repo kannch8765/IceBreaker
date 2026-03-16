@@ -22,11 +22,19 @@ export default function HallLobbyPage() {
   const [isClosing, setIsClosing] = useState(false);
 
   useEffect(() => {
-    // If the room is removed the status document might not exist, checking loading
-    // We can handle closed room redirects if needed.
-  }, [status]);
+    if (status === 'closed') {
+       router.push('/hall');
+    }
+  }, [status, router]);
 
-  const joinUrl = `https://icebreaker.app/join?room=${roomId}`;
+  const [origin, setOrigin] = useState('https://icebreaker.app');
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setOrigin(window.location.origin);
+    }
+  }, []);
+
+  const joinUrl = `${origin}/?room=${roomId}`;
 
   const handleStart = async () => {
     try {
@@ -40,7 +48,7 @@ export default function HallLobbyPage() {
     setIsClosing(true);
     try {
       await closeRoom(roomId);
-      router.push('/hall');
+      // The useEffect will handle redirection when status changes to 'closed'
     } catch (err) {
       console.error(err);
       setIsClosing(false);

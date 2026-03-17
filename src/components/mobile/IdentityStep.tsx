@@ -8,7 +8,9 @@ import { Button } from '@/components/ui/Button';
 export function IdentityStep() {
   const { formData, updateFormData, nextStep, t, language } = useOnboardingStore();
 
-  const isFormValid = formData.username.trim().length > 0 && formData.pronoun.trim().length > 0;
+  const isFormValid = formData.username.trim().length > 0 
+    && formData.username.length <= 15
+    && formData.pronoun.trim().length > 0;
 
   return (
     <StepWrapper>
@@ -34,8 +36,10 @@ export function IdentityStep() {
             value={formData.username}
             onChange={(e) => updateFormData({ username: e.target.value })}
             placeholder="e.g. Alex"
+            maxLength={15}
             className="w-full px-4 py-3 rounded-2xl bg-white dark:bg-gray-900 border border-purple-100 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-400 outline-none transition-all shadow-sm"
           />
+          <p className="text-xs text-gray-400 mt-1 ml-1 pl-2">Max 15 characters</p>
         </div>
 
           <div>

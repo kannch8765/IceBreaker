@@ -12,6 +12,15 @@ export function generateRoomId(): string {
 }
 
 export async function createRoom(): Promise<string> {
+  // Rate limiting: 1 room per 2 minutes per device
+  if (typeof window !== 'undefined') {
+    const lastCreated = localStorage.getItem('lastRoomCreated');
+    const now = Date.now();
+    if (lastCreated && now - parseInt(lastCreated) < 2 * 60 * 1000) {
+      throw new Error("Please wait a bit before creating another room.");
+    }
+  }
+
   const roomId = generateRoomId();
   const roomRef = doc(db, "rooms", roomId);
   const statsRef = doc(db, "global_stats", "system");
@@ -40,6 +49,10 @@ export async function createRoom(): Promise<string> {
         settings: {}
       });
     });
+    
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('lastRoomCreated', Date.now().toString());
+    }
     
     return roomId;
   } catch (error) {

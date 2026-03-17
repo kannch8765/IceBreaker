@@ -40,7 +40,9 @@ export function QuestionsStep() {
     updateFormData({ answers: newAnswers });
   };
 
-  const isComplete = formData.answers[0]?.trim() && formData.answers[1]?.trim();
+  const isComplete = 
+    formData.answers[0]?.trim() && formData.answers[0].length <= 100 &&
+    formData.answers[1]?.trim() && formData.answers[1].length <= 100;
 
   return (
     <StepWrapper>
@@ -76,8 +78,10 @@ export function QuestionsStep() {
               value={formData.answers[0]}
               onChange={(e) => handleAnswerChange(0, e.target.value)}
               placeholder="Your answer..."
+              maxLength={100}
               className="w-full px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-900 border-none focus:outline-none focus:ring-2 focus:ring-indigo-300 resize-none text-sm dark:text-gray-200"
             />
+            <p className="text-[10px] text-gray-400 mt-1 ml-1">Max 100 characters</p>
           </motion.div>
 
           <motion.div
@@ -94,8 +98,10 @@ export function QuestionsStep() {
               value={formData.answers[1]}
               onChange={(e) => handleAnswerChange(1, e.target.value)}
               placeholder="Your answer..."
+              maxLength={100}
               className="w-full px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-900 border-none focus:outline-none focus:ring-2 focus:ring-indigo-300 resize-none text-sm dark:text-gray-200"
             />
+            <p className="text-[10px] text-gray-400 mt-1 ml-1">Max 100 characters</p>
           </motion.div>
         </div>
       )}

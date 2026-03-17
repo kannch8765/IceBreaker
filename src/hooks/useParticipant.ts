@@ -29,8 +29,18 @@ export function useParticipant() {
     setError(null);
 
     try {
-      // 1. Generate a doc reference first to get the ID
+      // 0. Check capacity (limit 50 per room)
       const participantsRef = collection(db, 'rooms', roomId, 'participants');
+      
+      // We use a simplified check here. For a perfect solution, we'd use a transaction or a counter.
+      // But for a demo/hackathon, this is a reasonable "soft" check.
+      const { getDocs, query, limit } = await import('firebase/firestore');
+      const snapshot = await getDocs(query(participantsRef, limit(51)));
+      if (snapshot.size >= 50) {
+        throw new Error("This room is at full capacity (max 50).");
+      }
+
+      // 1. Generate a doc reference first to get the ID
       const newParticipantRef = doc(participantsRef);
       const newId = newParticipantRef.id;
 

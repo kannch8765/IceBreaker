@@ -1,14 +1,31 @@
-.env*
-node_modules
-.next/
+# Dependencies
+node_modules/
 
-# logs
+# Next.js Build & Export
+.next/
+out/
+dist/
+*.tsbuildinfo
+
+# Environment & Sensitive Files
+.env
+.env.local
+.env.production
+.env.*.local
+*.json.service-account
+
+# Firebase
+.firebase/
+firebase-debug.log*
+firestore-debug.log*
+
+# Logs
+*.log
+build_logs.txt
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# firebase
-.firebase/
-
-# OS files
+# OS Files
 .DS_Store
+Thumbs.db

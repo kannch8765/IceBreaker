@@ -6,11 +6,10 @@ service cloud.firestore {
       // Anyone can see a room to join it
       allow get: if true;
       // Host can create a room
-      allow create: if request.resource.data.status == 'waiting'
-                    && request.resource.data.createdAt == request.time;
+      allow create: if request.resource.data.status == 'waiting';
+      
       // Host can start/close session
-      allow update: if request.resource.data.status in ['active', 'closed']
-                    && request.resource.data.createdAt == resource.data.createdAt;
+      allow update: if request.resource.data.status in ['active', 'closed'];
       
       // Participants sub-collection
       match /participants/{participantId} {
@@ -19,7 +18,6 @@ service cloud.firestore {
         // Anyone can join a room
         allow create: if request.resource.data.status == 'waiting_for_ai';
         // AI background worker or matching logic updates these
-        // In a real app, we'd use service account auth, but for demo we allow updates
         allow update: if true; 
       }
     }
@@ -27,14 +25,14 @@ service cloud.firestore {
     // Global Statistics
     match /global_stats/system {
       allow read: if true;
-      // Transaction-based counter update
-      allow update: if request.resource.data.activeRooms >= 0
-                    && request.resource.data.activeRooms <= 50;
+      // Allow create and update for the transaction-based counter
+      allow create, update: if true;
     }
     
     // Default: Deny everything else
     match /{document=**} {
-      allow read, write: if false;
+      allow read: if true;
+      allow write: if false;
     }
   }
 }

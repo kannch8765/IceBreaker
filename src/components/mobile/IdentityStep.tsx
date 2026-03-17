@@ -4,9 +4,11 @@ import { useOnboardingStore } from '@/context/OnboardingContext';
 import { StepWrapper } from '@/components/motion/StepWrapper';
 import { User } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { useTranslation } from '@/context/LanguageContext';
 
 export function IdentityStep() {
-  const { formData, updateFormData, nextStep, t, language } = useOnboardingStore();
+  const { formData, updateFormData, nextStep, language } = useOnboardingStore();
+  const { t } = useTranslation();
 
   const isFormValid = formData.username.trim().length > 0 
     && formData.username.length <= 15

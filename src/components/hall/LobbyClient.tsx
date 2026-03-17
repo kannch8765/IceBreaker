@@ -10,6 +10,8 @@ import D3Background from '@/components/hall/D3Background';
 import { Loader2 } from 'lucide-react';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { useTheme } from '@/hooks/useTheme';
+import { useTranslation } from '@/context/LanguageContext';
+import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher';
 
 interface LobbyClientProps {
   roomId: string;
@@ -18,6 +20,7 @@ interface LobbyClientProps {
 export default function LobbyClient({ roomId }: LobbyClientProps) {
   const { theme } = useTheme();
   const router = useRouter();
+  const { t } = useTranslation();
   
   const { participants, loading } = useRoomParticipants(roomId);
   const { status } = useRoomState(roomId);
@@ -66,7 +69,8 @@ export default function LobbyClient({ roomId }: LobbyClientProps) {
 
   return (
     <div className="relative min-h-screen bg-background text-foreground overflow-hidden transition-colors duration-500">
-      <div className="absolute top-4 right-4 z-50">
+      <div className="absolute top-4 right-4 z-50 flex items-center gap-2">
+        <LanguageSwitcher />
         <ThemeToggle />
       </div>
       <D3Background theme={theme} />
@@ -83,7 +87,7 @@ export default function LobbyClient({ roomId }: LobbyClientProps) {
           >
             <h2 className="text-2xl font-bold tracking-widest text-purple-600 dark:text-[#00FF41] uppercase flex items-center gap-3">
               <span className="w-2 h-2 rounded-full bg-purple-600 dark:bg-[#00FF41] animate-pulse"></span>
-              Lobby Active
+              {t('lobbyActive')}
             </h2>
             <div className="bg-white p-6 rounded-3xl">
               <QRCodeSVG 
@@ -95,7 +99,7 @@ export default function LobbyClient({ roomId }: LobbyClientProps) {
               />
             </div>
             <div className="text-center space-y-2">
-              <p className="text-gray-600 dark:text-gray-400 font-medium transition-colors">Join securely at icebreaker.app with code:</p>
+              <p className="text-gray-600 dark:text-gray-400 font-medium transition-colors">{t('joinSecurely')}</p>
               <p className="text-6xl font-black text-gray-900 dark:text-white tracking-[0.2em] transition-colors">{roomId}</p>
             </div>
           </motion.div>
@@ -111,14 +115,14 @@ export default function LobbyClient({ roomId }: LobbyClientProps) {
               onClick={handleStart}
               className="flex-1 py-4 bg-purple-600 dark:bg-[#00FF41] text-white dark:text-black font-bold text-lg rounded-2xl hover:bg-purple-700 dark:hover:bg-white hover:text-white dark:hover:text-black transition-all shadow-[0_0_20px_rgba(147,51,234,0.3)] dark:shadow-[0_0_20px_rgba(0,255,65,0.3)]"
             >
-              Start Session
+              {t('startSession')}
             </button>
             <button 
               onClick={handleClose}
               disabled={isClosing}
               className="px-8 py-4 bg-transparent border-2 border-red-500/50 text-red-500 font-bold text-lg rounded-2xl hover:bg-red-500 hover:text-white hover:border-red-500 transition-all disabled:opacity-50"
             >
-              Kill Switch
+              {t('killSwitch')}
             </button>
           </motion.div>
         </div>
@@ -131,9 +135,9 @@ export default function LobbyClient({ roomId }: LobbyClientProps) {
             className="mb-10 text-center lg:text-left"
           >
             <h3 className="text-7xl font-black mb-4 tracking-tighter transition-colors">
-              <span className="text-purple-600 dark:text-[#00FF41] transition-colors">{participants.length}</span> Connected
+              <span className="text-purple-600 dark:text-[#00FF41] transition-colors">{participants.length}</span> {t('connected')}
             </h3>
-            <p className="text-gray-600 dark:text-gray-400 text-2xl font-light transition-colors">Network ready for initialization...</p>
+            <p className="text-gray-600 dark:text-gray-400 text-2xl font-light transition-colors">{t('networkReady')}</p>
           </motion.div>
 
           {/* Participant Grid */}
@@ -157,7 +161,7 @@ export default function LobbyClient({ roomId }: LobbyClientProps) {
             </div>
             {participants.length === 0 && (
               <div className="h-48 flex flex-col items-center justify-center text-gray-400 dark:text-gray-500/50 italic border-2 border-dashed border-gray-300 dark:border-gray-800/50 rounded-3xl mt-4 transition-colors">
-                <p className="text-xl">Awaiting connections</p>
+                <p className="text-xl">{t('awaitingConnections')}</p>
               </div>
             )}
           </div>

@@ -1,9 +1,9 @@
 "use client";
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { TRANSLATIONS, TranslationKey } from '@/lib/translations';
+import { TranslationKey } from '@/lib/translations';
+import { useTranslation, Language } from '@/context/LanguageContext';
 
-export type Language = 'en' | 'jp' | 'cn';
 export type Theme = 'light' | 'dark';
 
 type FormData = {
@@ -53,7 +53,7 @@ export function OnboardingProvider({ children }: { children: React.ReactNode }) 
     mood: '',
     answers: ['', ''],
   });
-  const [language, setLanguage] = useState<Language>('en');
+  const { language, setLanguage, t } = useTranslation();
   const [theme, setTheme] = useState<Theme>('light');
   const [participantId, setParticipantId] = useState<string | null>(null);
   const [aiTopics, setAiTopics] = useState<string[]>([]);
@@ -72,10 +72,6 @@ export function OnboardingProvider({ children }: { children: React.ReactNode }) 
   const prevStep = () => setStep((s) => Math.max(1, s - 1));
   const updateFormData = (data: Partial<FormData>) => {
     setFormData((prev) => ({ ...prev, ...data }));
-  };
-
-  const t = (key: TranslationKey) => {
-    return TRANSLATIONS[language][key];
   };
 
   return (

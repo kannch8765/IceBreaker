@@ -6,10 +6,13 @@ import { motion } from 'framer-motion';
 import { createRoom } from '@/lib/room';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { useTheme } from '@/hooks/useTheme';
+import { useTranslation } from '@/context/LanguageContext';
+import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher';
 
 export default function HallLanding() {
   const router = useRouter();
   const { theme } = useTheme();
+  const { t } = useTranslation();
   const [isCreating, setIsCreating] = useState(false);
   const [error, setError] = useState('');
 
@@ -22,7 +25,7 @@ export default function HallLanding() {
       router.push(`/?room=${roomId}&mode=hall`);
     } catch (err: any) {
       console.error(err);
-      setError(err.message || "Failed to create room.");
+      setError(err.message || t('failedCreateRoom'));
       // Cooldown: keep button disabled for 5 seconds even on error
       setTimeout(() => setIsCreating(false), 5000);
     }
@@ -30,7 +33,8 @@ export default function HallLanding() {
 
   return (
     <div className="relative min-h-screen w-full bg-background text-foreground overflow-hidden flex items-center transition-colors duration-500">
-      <div className="absolute top-4 right-4 z-50">
+      <div className="absolute top-4 right-4 z-50 flex items-center gap-3">
+        <LanguageSwitcher />
         <ThemeToggle />
       </div>
       {/* Background Matrix-style Scanline Effect */}
@@ -55,10 +59,10 @@ export default function HallLanding() {
           className="max-w-2xl"
         >
           <h1 className="text-6xl md:text-8xl font-black mb-6 tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-purple-600 dark:from-white via-indigo-500 dark:via-green-400 to-purple-400 dark:to-[#00FF41]">
-            Hello, Nexus
+            {t('helloNexus')}
           </h1>
           <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-400 mb-12 max-w-lg leading-relaxed">
-            Initialize a real-time connection hub. Bring people together instantly.
+            {t('initHub')}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-6">
@@ -69,7 +73,7 @@ export default function HallLanding() {
               disabled={isCreating}
               className="px-8 py-4 bg-purple-600 dark:bg-[#00FF41] text-white dark:text-black font-bold text-lg rounded-2xl shadow-[0_0_20px_rgba(147,51,234,0.4)] dark:shadow-[0_0_20px_rgba(0,255,65,0.4)] hover:shadow-[0_0_30px_rgba(147,51,234,0.6)] dark:hover:shadow-[0_0_30px_rgba(0,255,65,0.6)] transition-shadow flex items-center justify-center disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              {isCreating ? "Initializing..." : "Quick Setup"}
+              {isCreating ? t('initializing') : t('quickSetup')}
             </motion.button>
             
             <motion.button
@@ -78,7 +82,7 @@ export default function HallLanding() {
               disabled
               className="px-8 py-4 bg-gray-200 dark:bg-gray-800 text-gray-400 dark:text-gray-500 font-bold text-lg rounded-2xl cursor-not-allowed border border-gray-300 dark:border-gray-700 transition-colors duration-500"
             >
-              Manual Setup
+              {t('manualSetup')}
             </motion.button>
           </div>
           

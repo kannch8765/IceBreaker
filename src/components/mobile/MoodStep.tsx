@@ -5,6 +5,7 @@ import { StepWrapper } from '@/components/motion/StepWrapper';
 import { Camera, Smile, ArrowLeft, CameraIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/Button';
+import { useTranslation } from '@/context/LanguageContext';
 
 const MOODS = [
   { emoji: '🔥', label: 'Energetic' },
@@ -16,7 +17,8 @@ const MOODS = [
 ];
 
 export function MoodStep() {
-  const { formData, updateFormData, nextStep, prevStep, t, language } = useOnboardingStore();
+  const { formData, updateFormData, nextStep, prevStep, language } = useOnboardingStore();
+  const { t } = useTranslation();
   const [view, setView] = useState<'chooser' | 'mood' | 'photo'>('chooser');
   const [hoveredIcon, setHoveredIcon] = useState<string | null>(null);
 

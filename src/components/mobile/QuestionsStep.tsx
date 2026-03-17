@@ -14,9 +14,11 @@ const ALL_PROMPTS = [
 ];
 
 import { useParticipant } from '@/hooks/useParticipant';
+import { useTranslation } from '@/context/LanguageContext';
 
 export function QuestionsStep() {
-  const { formData, updateFormData, nextStep, prevStep, t, language, roomId } = useOnboardingStore();
+  const { formData, updateFormData, nextStep, prevStep, language, roomId } = useOnboardingStore();
+  const { t } = useTranslation();
   const { createParticipant, loading: isSubmitting, error: submitError } = useParticipant();
   const [prompts, setPrompts] = useState<string[]>([]);
   

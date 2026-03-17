@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { collection, onSnapshot, query, doc } from 'firebase/firestore';
+import { collection, onSnapshot, query, where, Timestamp, doc } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 
 export interface Participant {
@@ -8,6 +8,7 @@ export interface Participant {
   photo?: string;
   mood?: string;
   status: 'onboarding' | 'ready';
+  expiresAt?: Timestamp;
   [key: string]: any;
 }
 
@@ -24,7 +25,13 @@ export function useRoomParticipants(roomId: string) {
     }
 
     const participantsRef = collection(db, 'rooms', roomId, 'participants');
-    const q = query(participantsRef);
+    // Lazy expiration: only show participants where room hasn't expired
+    // Note: We'd typically filter the Room itself, but filtering participants 
+    // here ensures the Hall view stays clean during the demo.
+    const q = query(
+      participantsRef, 
+      where('expiresAt', '>', Timestamp.now())
+    );
 
     const unsubscribe = onSnapshot(
       q,
@@ -59,7 +66,14 @@ export function useRoomState(roomId: string) {
     const roomRef = doc(db, 'rooms', roomId);
     const unsubscribe = onSnapshot(roomRef, (docSnap) => {
       if (docSnap.exists()) {
-        setStatus(docSnap.data().status);
+        const data = docSnap.data();
+        const now = Timestamp.now();
+        
+        if (data.expiresAt && data.expiresAt.toMillis() < now.toMillis()) {
+          setStatus('closed'); // Treat expired as closed
+        } else {
+          setStatus(data.status);
+        }
       }
     }, (err) => {
       console.error("Error fetching room state:", err);

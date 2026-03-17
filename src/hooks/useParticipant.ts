@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from 'react';
-import { doc, onSnapshot, setDoc, serverTimestamp, collection } from 'firebase/firestore';
+import { doc, onSnapshot, setDoc, serverTimestamp, collection, Timestamp } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { useOnboardingStore } from '../context/OnboardingContext';
 
@@ -34,6 +34,9 @@ export function useParticipant() {
       const newParticipantRef = doc(participantsRef);
       const newId = newParticipantRef.id;
 
+      const now = Timestamp.now();
+      const expiresAt = Timestamp.fromMillis(now.toMillis() + 2 * 60 * 60 * 1000); // 2 hours
+
       // 2. Use setDoc as requested
       await setDoc(newParticipantRef, {
         username: formData.username,
@@ -42,6 +45,7 @@ export function useParticipant() {
         answers: formData.answers,
         status: 'waiting_for_ai',
         createdAt: serverTimestamp(),
+        expiresAt: expiresAt,
       });
 
       setParticipantId(newId);

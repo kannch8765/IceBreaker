@@ -12,6 +12,20 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
+// Simple check for hackathon readiness
+if (typeof window !== "undefined") {
+  const missingKeys = Object.entries(firebaseConfig)
+    .filter(([_, value]) => !value)
+    .map(([key]) => key);
+
+  if (missingKeys.length > 0) {
+    console.error(
+      "❌ FIREBASE CONFIG MISSING: The following keys are not set in .env.local:",
+      missingKeys.join(", ")
+    );
+  }
+}
+
 const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);

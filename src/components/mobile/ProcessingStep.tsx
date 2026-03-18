@@ -8,7 +8,7 @@ import { useParticipant } from '@/hooks/useParticipant';
 
 export function ProcessingStep() {
   const { nextStep, t, language } = useOnboardingStore();
-  const { status, error } = useParticipant();
+  const { status, error, isTakingLong } = useParticipant();
 
   useEffect(() => {
     if (status === 'ready') {
@@ -42,15 +42,27 @@ export function ProcessingStep() {
             transition={{ duration: 1.5, repeat: Infinity }}
             className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2"
           >
-            {t('analyzingProfile')}
+            {error ? "Oops!" : t('analyzingProfile')}
           </motion.h2>
-          <p className="text-gray-500 dark:text-gray-400 text-sm">
+          
+          <div className="text-gray-500 dark:text-gray-400 text-sm space-y-2">
             {error ? (
-              <span className="text-red-500 font-medium">{error}</span>
+              <p className="text-red-500 font-medium">{error}</p>
             ) : (
-              t('generatingIceBreakers')
+              <>
+                <p>{t('generatingIceBreakers')}</p>
+                {isTakingLong && (
+                  <motion.p 
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-indigo-500 dark:text-indigo-400 italic"
+                  >
+                    Still working... Vertex AI is taking a moment to craft your perfect topics.
+                  </motion.p>
+                )}
+              </>
             )}
-          </p>
+          </div>
         </motion.div>
       </div>
     </StepWrapper>

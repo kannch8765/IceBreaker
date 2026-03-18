@@ -18,6 +18,7 @@ export function useParticipant() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [status, setStatus] = useState<string | null>(null);
+  const [isTakingLong, setIsTakingLong] = useState(false);
 
   const createParticipant = useCallback(async () => {
     if (!roomId) {
@@ -29,25 +30,19 @@ export function useParticipant() {
     setError(null);
 
     try {
-      // 0. Check capacity (limit 50 per room)
       const participantsRef = collection(db, 'rooms', roomId, 'participants');
-      
-      // We use a simplified check here. For a perfect solution, we'd use a transaction or a counter.
-      // But for a demo/hackathon, this is a reasonable "soft" check.
       const { getDocs, query, limit } = await import('firebase/firestore');
       const snapshot = await getDocs(query(participantsRef, limit(51)));
       if (snapshot.size >= 50) {
         throw new Error("This room is at full capacity (max 50).");
       }
 
-      // 1. Generate a doc reference first to get the ID
       const newParticipantRef = doc(participantsRef);
       const newId = newParticipantRef.id;
 
       const now = Timestamp.now();
       const expiresAt = Timestamp.fromMillis(now.toMillis() + 2 * 60 * 60 * 1000); // 2 hours
 
-      // 2. Use setDoc as requested
       await setDoc(newParticipantRef, {
         username: formData.username,
         pronoun: formData.pronoun,
@@ -74,15 +69,10 @@ export function useParticipant() {
 
     const participantRef = doc(db, 'rooms', roomId, 'participants', participantId);
     
-    // 30 second timeout as requested
-    const timeoutId = setTimeout(() => {
-      // We check the status locally without making it a dependency of the effect
-      // to avoid unnecessary listener churn.
-      setError(prevError => {
-        // Only set timeout error if no other error exists and status isn't ready
-        return prevError === null ? "AI generation timed out. Please try again or contact support." : prevError;
-      });
-    }, 30000);
+    // Soft hint timer (does not set error, just a UI flag)
+    const hintTimeoutId = setTimeout(() => {
+      setIsTakingLong(true);
+    }, 45000);
 
     const unsubscribe = onSnapshot(participantRef, (docSnap) => {
       if (docSnap.exists()) {
@@ -90,27 +80,35 @@ export function useParticipant() {
         setStatus(data.status);
         
         if (data.status === 'ready') {
-          clearTimeout(timeoutId);
+          clearTimeout(hintTimeoutId);
+          setIsTakingLong(false);
           if (data.aiTopics) setAiTopics(data.aiTopics);
           if (data.avatarUrl) setAvatarUrl(data.avatarUrl);
         }
         
         if (data.status === 'error') {
-          clearTimeout(timeoutId);
+          clearTimeout(hintTimeoutId);
+          setIsTakingLong(false);
           setError(data.errorMessage || "An error occurred during AI generation");
         }
+      } else {
+        // If doc is missing but we have an ID, could be a cleanup or edge case
+        setError("Participant record not found.");
       }
     }, (err) => {
       console.error("Error listening to participant:", err);
-      setError("Lost connection to live updates");
-      clearTimeout(timeoutId);
+      // Don't set a hard error here, as Firestore onSnapshot often auto-reconnects
+      // Only set if we really lose it
+      if (err.code === 'permission-denied') {
+        setError("Access denied. Please try joining again.");
+      }
     });
 
     return () => {
       unsubscribe();
-      clearTimeout(timeoutId);
+      clearTimeout(hintTimeoutId);
     };
-  }, [roomId, participantId, setAiTopics, setAvatarUrl]); // status removed from deps
+  }, [roomId, participantId, setAiTopics, setAvatarUrl]);
 
-  return { createParticipant, loading, error, status };
+  return { createParticipant, loading, error, status, isTakingLong };
 }

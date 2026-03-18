@@ -25,7 +25,7 @@
 ## 5. Workflow & Safety Rules
 - **Step Limit:** If a task exceeds **10 steps**, stop and report the current status and the next proposed actions before proceeding [8].
 - **Language:** Perform all planning, thought processes, and communication in **English** (unless otherwise specified) [9].
-- **Planning:** Always generate an `implementation_plan.md` before writing code for new features like the Matching Algorithm [3, 10].
+- **Planning & Review:** Generate descriptive markdown files (e.g., `feature_plan.md`, `code_review.md`) before significant code changes or after reviews. **All such generated documents must be stored in the `docs/` directory.**
 
 ## 6. Frontend Architecture (View Separation)
 - **Event Hall View (Desktop):** High-performance landing page dedicated to the Live Network Graph using D3.js. Prioritize visual impact and real-time data streaming from Firestore.
@@ -33,6 +33,7 @@
 - **State Management:** Use React Context or a lightweight state manager to handle the transition from "Waiting Page" to the "Name Card" with matches.
 
 ## 7. File Organization
+- **docs/**: Central repository for all generated documentation, plans, and technical reviews to keep the root directory clean.
 - **src/components/hall:** Components specific to the large-screen D3.js visualization.
 - **src/components/mobile:** UI components for the user onboarding and name card display.
 - **src/components/ui:** Primitive components (Buttons, Inputs) with specific rounded styles.

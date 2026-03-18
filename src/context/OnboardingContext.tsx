@@ -59,6 +59,32 @@ export function OnboardingProvider({ children }: { children: React.ReactNode }) 
   const [aiTopics, setAiTopics] = useState<string[]>([]);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
 
+  // Persistence: Load from localStorage on mount
+  useEffect(() => {
+    const savedParticipantId = localStorage.getItem('participantId');
+    const savedStep = localStorage.getItem('onboardingStep');
+    const savedRoomId = localStorage.getItem('roomId');
+
+    if (savedParticipantId) setParticipantId(savedParticipantId);
+    if (savedStep) setStep(parseInt(savedStep, 10));
+    // Only restore roomId if not provided in URL
+    if (savedRoomId && !searchParams.get('room')) setRoomId(savedRoomId);
+  }, [searchParams]);
+
+  // Persistence: Save to localStorage on change
+  useEffect(() => {
+    if (participantId) localStorage.setItem('participantId', participantId);
+    else localStorage.removeItem('participantId');
+  }, [participantId]);
+
+  useEffect(() => {
+    localStorage.setItem('onboardingStep', step.toString());
+  }, [step]);
+
+  useEffect(() => {
+    if (roomId) localStorage.setItem('roomId', roomId);
+  }, [roomId]);
+
   // Sync theme with HTML document class
   useEffect(() => {
     if (theme === 'dark') {

@@ -10,7 +10,7 @@ type FormData = {
   username: string;
   pronoun: string;
   mood: string;
-  answers: string[];
+  answers: Record<string, string>; // questionId -> answer
 };
 
 type OnboardingContextType = {
@@ -28,10 +28,14 @@ type OnboardingContextType = {
   roomId: string | null;
   participantId: string | null;
   setParticipantId: (id: string | null) => void;
+  questions: Array<{ id: string; text: string }>;
+  setQuestions: (questions: Array<{ id: string; text: string }>) => void;
   aiTopics: string[];
   setAiTopics: (topics: string[]) => void;
   avatarUrl: string | null;
   setAvatarUrl: (url: string | null) => void;
+  status: string | null;
+  setStatus: (status: string | null) => void;
 };
 
 const OnboardingContext = createContext<OnboardingContextType | undefined>(undefined);
@@ -51,11 +55,13 @@ export function OnboardingProvider({ children }: { children: React.ReactNode }) 
     username: '',
     pronoun: '',
     mood: '',
-    answers: ['', ''],
+    answers: {},
   });
   const { language, setLanguage, t } = useTranslation();
   const [theme, setTheme] = useState<Theme>('light');
   const [participantId, setParticipantId] = useState<string | null>(null);
+  const [questions, setQuestions] = useState<Array<{ id: string; text: string }>>([]);
+  const [status, setStatus] = useState<string | null>(null);
   const [aiTopics, setAiTopics] = useState<string[]>([]);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
 
@@ -109,8 +115,10 @@ export function OnboardingProvider({ children }: { children: React.ReactNode }) 
       t,
       roomId,
       participantId, setParticipantId,
+      questions, setQuestions,
       aiTopics, setAiTopics,
-      avatarUrl, setAvatarUrl
+      avatarUrl, setAvatarUrl,
+      status, setStatus
     }}>
       {children}
     </OnboardingContext.Provider>

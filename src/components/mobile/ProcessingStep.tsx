@@ -7,8 +7,8 @@ import { motion } from 'framer-motion';
 import { useParticipant } from '@/hooks/useParticipant';
 
 export function ProcessingStep() {
-  const { nextStep, t, language } = useOnboardingStore();
-  const { status, error, isTakingLong } = useParticipant();
+  const { nextStep, t, language, status } = useOnboardingStore();
+  const { error, isTakingLong } = useParticipant();
 
   useEffect(() => {
     if (status === 'ready') {

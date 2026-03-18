@@ -1,125 +1,136 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useOnboardingStore } from '@/context/OnboardingContext';
 import { StepWrapper } from '@/components/motion/StepWrapper';
 import { Button } from '@/components/ui/Button';
-import { ArrowLeft, Sparkles } from 'lucide-react';
-import { motion } from 'framer-motion';
-
-const ALL_PROMPTS = [
-  "What is your secret talent?",
-  "What's a topic you could give a 30-minute presentation on with no prep?",
-  "If you had to change your name, what would you change it to?",
-  "What's the best piece of advice you've ever been given?"
-];
-
+import { ArrowLeft, Sparkles, Loader2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useParticipant } from '@/hooks/useParticipant';
 import { useTranslation } from '@/context/LanguageContext';
 
 export function QuestionsStep() {
-  const { formData, updateFormData, nextStep, prevStep, language, roomId } = useOnboardingStore();
+  const { formData, updateFormData, nextStep, prevStep, language, roomId, status, questions } = useOnboardingStore();
   const { t } = useTranslation();
-  const { createParticipant, loading: isSubmitting, error: submitError } = useParticipant();
-  const [prompts, setPrompts] = useState<string[]>([]);
+  const { updateParticipant, loading: isSubmitting, error, isTakingLong } = useParticipant();
   
-  useEffect(() => {
-    // Select two random prompts
-    const shuffled = [...ALL_PROMPTS].sort(() => 0.5 - Math.random());
-    setPrompts(shuffled.slice(0, 2));
-  }, []);
+  const handleAnswerChange = (qId: string, value: string) => {
+    updateFormData({ 
+      answers: { 
+        ...formData.answers, 
+        [qId]: value 
+      } 
+    });
+  };
 
-  const handleNext = async () => {
+  const isComplete = questions.length > 0 && questions.every(q => formData.answers[q.id]?.trim());
+
+  const handleSubmit = async () => {
     if (!roomId) return;
-    const id = await createParticipant();
-    if (id) {
-      nextStep();
-    }
-  };
+    
+    // Construct the structured QA array
+    const qa = questions.map(q => ({
+      questionId: q.id,
+      question: q.text,
+      answer: formData.answers[q.id] || ''
+    }));
 
-  const handleAnswerChange = (index: number, value: string) => {
-    const newAnswers = [...formData.answers];
-    newAnswers[index] = value;
-    updateFormData({ answers: newAnswers });
+    await updateParticipant({
+      qa,
+      status: 'waiting_for_ai'
+    });
+    
+    nextStep();
   };
-
-  const isComplete = 
-    formData.answers[0]?.trim() && formData.answers[0].length <= 100 &&
-    formData.answers[1]?.trim() && formData.answers[1].length <= 100;
 
   return (
     <StepWrapper>
-      <button onClick={prevStep} className="self-start text-gray-500 mb-4 p-2">
-        <ArrowLeft size={24} />
-      </button>
-      
-      <div className="w-16 h-16 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center mb-6 shadow-inner mx-auto">
-        <Sparkles size={32} className="text-indigo-400 dark:text-indigo-300" />
-      </div>
-
-      <motion.div key={`text-${language}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col w-full items-center">
-        <h2 className="text-2xl font-bold mb-2 text-center text-gray-800 dark:text-gray-100">
-          {t('breakIce')}
-        </h2>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mb-8 text-center">
-          {t('helpOthersKnow')}
-        </p>
-
-        {prompts.length > 0 && (
-        <div className="w-full space-y-6 mb-8">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.1 }}
-            className="w-full bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-indigo-50 dark:border-gray-700"
-          >
-            <label className="block text-sm font-semibold text-indigo-700 dark:text-indigo-300 mb-2">
-              {prompts[0]}
-            </label>
-            <textarea
-              rows={2}
-              value={formData.answers[0]}
-              onChange={(e) => handleAnswerChange(0, e.target.value)}
-              placeholder="Your answer..."
-              maxLength={100}
-              className="w-full px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-900 border-none focus:outline-none focus:ring-2 focus:ring-indigo-300 resize-none text-sm dark:text-gray-200"
-            />
-            <p className="text-[10px] text-gray-400 mt-1 ml-1">Max 100 characters</p>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2 }}
-            className="w-full bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-indigo-50 dark:border-gray-700"
-          >
-            <label className="block text-sm font-semibold text-indigo-700 dark:text-indigo-300 mb-2">
-              {prompts[1]}
-            </label>
-            <textarea
-              rows={2}
-              value={formData.answers[1]}
-              onChange={(e) => handleAnswerChange(1, e.target.value)}
-              placeholder="Your answer..."
-              maxLength={100}
-              className="w-full px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-900 border-none focus:outline-none focus:ring-2 focus:ring-indigo-300 resize-none text-sm dark:text-gray-200"
-            />
-            <p className="text-[10px] text-gray-400 mt-1 ml-1">Max 100 characters</p>
-          </motion.div>
+      <div className="flex flex-col w-full min-h-[400px]">
+        <button onClick={prevStep} className="self-start text-gray-500 mb-4 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors">
+          <ArrowLeft size={24} />
+        </button>
+        
+        <div className="w-16 h-16 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center mb-6 shadow-inner mx-auto">
+          <Sparkles size={32} className="text-indigo-400 dark:text-indigo-300" />
         </div>
-      )}
 
-      {submitError && (
-        <p className="text-red-500 text-xs mb-4 text-center">{submitError}</p>
-      )}
+        <AnimatePresence mode="wait">
+          {status === 'generating_questions' ? (
+            <motion.div
+              key="loading"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="flex flex-col items-center justify-center py-12 text-center"
+            >
+              <Loader2 className="w-12 h-12 text-indigo-500 animate-spin mb-4" />
+              <h2 className="text-2xl font-bold mb-2 text-gray-800 dark:text-gray-100">
+                {t('craftingIceBreakers')}
+              </h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400 max-w-xs">
+                Gemini is analyzing your profile to generate personalized questions...
+              </p>
+              {isTakingLong && (
+                <p className="mt-4 text-xs text-indigo-500 italic animate-pulse">
+                  Taking a bit longer than expected...
+                </p>
+              )}
+            </motion.div>
+          ) : (
+            <motion.div 
+              key="questions"
+              initial={{ opacity: 0 }} 
+              animate={{ opacity: 1 }} 
+              className="flex flex-col w-full items-center"
+            >
+              <h2 className="text-2xl font-bold mb-2 text-center text-gray-800 dark:text-gray-100">
+                {t('breakIce')}
+              </h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-8 text-center">
+                {t('helpOthersKnow')}
+              </p>
 
-      <Button
-        onClick={handleNext}
-        disabled={!isComplete || isSubmitting || !roomId}
-        className={!isComplete || isSubmitting || !roomId ? "opacity-50 cursor-not-allowed from-gray-400 to-gray-500" : ""}
-      >
-        {isSubmitting ? "Connecting..." : t('generateCard')}
-      </Button>
-      </motion.div>
+              <div className="w-full space-y-6 mb-8">
+                {questions.map((q, idx) => (
+                  <motion.div
+                    key={q.id}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: idx * 0.1 }}
+                    className="w-full bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-indigo-50 dark:border-gray-700"
+                  >
+                    <label className="block text-sm font-semibold text-indigo-700 dark:text-indigo-300 mb-2">
+                      {q.text}
+                    </label>
+                    <textarea
+                      rows={2}
+                      value={formData.answers[q.id] || ''}
+                      onChange={(e) => handleAnswerChange(q.id, e.target.value)}
+                      placeholder="Your answer..."
+                      maxLength={100}
+                      className="w-full px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-900 border-none focus:outline-none focus:ring-2 focus:ring-indigo-300 resize-none text-sm dark:text-gray-200"
+                    />
+                    <p className="text-[10px] text-gray-400 mt-1 ml-1 text-right">
+                      {(formData.answers[q.id]?.length || 0)}/100
+                    </p>
+                  </motion.div>
+                ))}
+              </div>
+
+              {error && (
+                <p className="text-red-500 text-xs mb-4 text-center">{error}</p>
+              )}
+
+              <Button
+                onClick={handleSubmit}
+                disabled={!isComplete || isSubmitting || !roomId}
+                className={!isComplete || isSubmitting || !roomId ? "opacity-50 cursor-not-allowed" : ""}
+              >
+                {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : t('generateCard')}
+              </Button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </StepWrapper>
   );
 }

@@ -16,8 +16,11 @@ const MOODS = [
   { emoji: '😴', label: 'Tired' }
 ];
 
+import { useParticipant } from '@/hooks/useParticipant';
+
 export function MoodStep() {
   const { formData, updateFormData, nextStep, prevStep, language } = useOnboardingStore();
+  const { createParticipant, loading: isCreating } = useParticipant();
   const { t } = useTranslation();
   const [view, setView] = useState<'chooser' | 'mood' | 'photo'>('chooser');
   const [hoveredIcon, setHoveredIcon] = useState<string | null>(null);
@@ -127,8 +130,17 @@ export function MoodStep() {
               ))}
             </div>
 
-            <Button onClick={nextStep} disabled={!formData.mood} className={!formData.mood ? "opacity-50" : ""}>
-              <motion.span key={`cont-${language}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>{t('continue')}</motion.span>
+            <Button 
+              onClick={async () => {
+                const id = await createParticipant();
+                if (id) nextStep();
+              }} 
+              disabled={!formData.mood || isCreating} 
+              className={!formData.mood || isCreating ? "opacity-50" : ""}
+            >
+              <motion.span key={`cont-${language}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                {isCreating ? t('initializing') : t('continue')}
+              </motion.span>
             </Button>
           </motion.div>
         )}
@@ -155,8 +167,13 @@ export function MoodStep() {
 
               <div className="absolute bottom-6 w-full flex justify-center">
                 <button
-                  onClick={() => { updateFormData({ mood: 'Photo Taken' }); nextStep(); }}
-                  className="w-16 h-16 rounded-full bg-white border-4 border-gray-300 shadow-lg"
+                  disabled={isCreating}
+                  onClick={async () => { 
+                    updateFormData({ mood: 'Photo Taken' }); 
+                    const id = await createParticipant();
+                    if (id) nextStep();
+                  }}
+                  className={`w-16 h-16 rounded-full bg-white border-4 border-gray-300 shadow-lg ${isCreating ? 'opacity-50 cursor-not-allowed' : ''}`}
                 />
               </div>
             </div>

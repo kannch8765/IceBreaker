@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from 'react';
-import { doc, onSnapshot, setDoc, serverTimestamp, collection, Timestamp } from 'firebase/firestore';
+import { doc, onSnapshot, setDoc, updateDoc, serverTimestamp, collection, Timestamp } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { useOnboardingStore } from '../context/OnboardingContext';
 
@@ -12,12 +12,13 @@ export function useParticipant() {
     setParticipantId, 
     setAiTopics, 
     setAvatarUrl,
+    setQuestions,
+    setStatus,
     formData 
   } = useOnboardingStore();
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [status, setStatus] = useState<string | null>(null);
   const [isTakingLong, setIsTakingLong] = useState(false);
 
   const createParticipant = useCallback(async () => {
@@ -47,8 +48,7 @@ export function useParticipant() {
         username: formData.username,
         pronoun: formData.pronoun,
         mood: formData.mood,
-        answers: formData.answers,
-        status: 'waiting_for_ai',
+        status: 'generating_questions', // Trigger backend personalized questions
         createdAt: serverTimestamp(),
         expiresAt: expiresAt,
       });
@@ -64,12 +64,26 @@ export function useParticipant() {
     }
   }, [roomId, formData, setParticipantId]);
 
+  const updateParticipant = useCallback(async (data: any) => {
+    if (!roomId || !participantId) return;
+    setLoading(true);
+    try {
+      const participantRef = doc(db, 'rooms', roomId, 'participants', participantId);
+      await updateDoc(participantRef, data);
+      setLoading(false);
+    } catch (err: any) {
+      console.error("Error updating participant:", err);
+      setError(err.message || "Failed to update profile");
+      setLoading(false);
+    }
+  }, [roomId, participantId]);
+
   useEffect(() => {
     if (!roomId || !participantId) return;
 
     const participantRef = doc(db, 'rooms', roomId, 'participants', participantId);
     
-    // Soft hint timer (does not set error, just a UI flag)
+    // Soft hint timer
     const hintTimeoutId = setTimeout(() => {
       setIsTakingLong(true);
     }, 45000);
@@ -79,26 +93,23 @@ export function useParticipant() {
         const data = docSnap.data();
         setStatus(data.status);
         
-        if (data.status === 'ready') {
+        if (data.questions) setQuestions(data.questions);
+        if (data.aiTopics) setAiTopics(data.aiTopics);
+        if (data.avatarUrl) setAvatarUrl(data.avatarUrl);
+
+        if (data.status === 'ready' || data.status === 'answering' || data.status === 'error') {
           clearTimeout(hintTimeoutId);
           setIsTakingLong(false);
-          if (data.aiTopics) setAiTopics(data.aiTopics);
-          if (data.avatarUrl) setAvatarUrl(data.avatarUrl);
         }
         
         if (data.status === 'error') {
-          clearTimeout(hintTimeoutId);
-          setIsTakingLong(false);
-          setError(data.errorMessage || "An error occurred during AI generation");
+          setError(data.errorMessage || "An error occurred");
         }
       } else {
-        // If doc is missing but we have an ID, could be a cleanup or edge case
         setError("Participant record not found.");
       }
     }, (err) => {
       console.error("Error listening to participant:", err);
-      // Don't set a hard error here, as Firestore onSnapshot often auto-reconnects
-      // Only set if we really lose it
       if (err.code === 'permission-denied') {
         setError("Access denied. Please try joining again.");
       }
@@ -108,7 +119,7 @@ export function useParticipant() {
       unsubscribe();
       clearTimeout(hintTimeoutId);
     };
-  }, [roomId, participantId, setAiTopics, setAvatarUrl]);
+  }, [roomId, participantId, setAiTopics, setAvatarUrl, setQuestions, setStatus]);
 
-  return { createParticipant, loading, error, status, isTakingLong };
+  return { createParticipant, updateParticipant, loading, error, isTakingLong };
 }

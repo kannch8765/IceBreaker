@@ -23,10 +23,47 @@
 - **Safety:** Always verify API quotas for Vertex AI before suggesting heavy iterative tasks [8].
 
 ## 5. Workflow & Safety Rules
-- **Step Limit:** If a task exceeds **10 steps**, stop and report the current status and the next proposed actions before proceeding [8].
-- **Language:** Perform all planning, thought processes, and communication in **English** (unless otherwise specified) [9].
-- **Planning & Review:** Generate descriptive markdown files (e.g., `feature_plan.md`, `code_review.md`) before significant code changes or after reviews. **All such generated documents must be stored in the `docs/` directory.**
+- **Step Limit:** If a task exceeds **10 steps**, stop and report the current status and the next proposed actions before proceeding.
+- **Language:** Perform all planning, thought processes, and communication in **English** (unless otherwise specified).
 
+- **Planning & Documentation (STRICT RULES):**
+  - For any planning, review, architectural reasoning, OR implementation summary (e.g., walkthrough), you MUST generate a markdown file.
+  - ALL such files MUST be saved inside the `docs/` directory. No exceptions.
+
+  ### 📂 File Organization (MANDATORY)
+  - You MUST categorize documents into one of the following subfolders:
+    - `docs/plan/`
+    - `docs/review/`
+    - `docs/spec/`
+    - `docs/walkthrough/`
+
+  - File paths MUST follow this format:
+    - `docs/<type>/<descriptive_name>.md`
+
+  - Examples:
+    - `docs/plan/onboarding_flow_plan.md`
+    - `docs/review/firestore_listener_review.md`
+    - `docs/spec/participant_schema.md`
+    - `docs/walkthrough/onboarding_flow_refactor.md`
+
+  ### 🧠 Document Type Rules
+  - **plan/** → Future implementation steps or refactoring strategy
+  - **review/** → Analysis of existing code or debugging findings
+  - **spec/** → System contracts, schemas, state machines
+  - **walkthrough/** → Implementation summaries, completed changes, or explanation of how a system currently works
+
+  ### 🚫 Strict Prohibitions
+  - You are STRICTLY FORBIDDEN from:
+    - Generating markdown files in the project root
+    - Generating markdown files outside `docs/`
+    - Skipping file creation and only responding in chat for plan/review/spec/walkthrough tasks
+
+  ### 📌 Output Requirements
+  - When generating a document, you MUST:
+    1. Clearly state the file path (e.g., `docs/walkthrough/xxx.md`)
+    2. Ensure the document is complete, structured, and production-ready
+    3. Provide a brief summary in chat (NOT the full document)
+    
 ## 6. Frontend Architecture (View Separation)
 - **Event Hall View (Desktop):** High-performance landing page dedicated to the Live Network Graph using D3.js. Prioritize visual impact and real-time data streaming from Firestore.
 - **User View (Mobile):** A responsive, form-driven interface for the introduction flow (username, mood, and questions).

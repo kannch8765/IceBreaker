@@ -16,7 +16,7 @@ service cloud.firestore {
         // Hall view needs to see all participants
         allow read: if true;
         // Anyone can join a room
-        allow create: if request.resource.data.status == 'waiting_for_ai';
+        allow create: if request.resource.data.status in ['generating_questions', 'waiting_for_ai'];
         // AI background worker or matching logic updates these
         allow update: if true; 
       }

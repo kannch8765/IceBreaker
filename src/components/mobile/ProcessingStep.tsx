@@ -4,17 +4,20 @@ import { useOnboardingStore } from '@/context/OnboardingContext';
 import { StepWrapper } from '@/components/motion/StepWrapper';
 import { motion } from 'framer-motion';
 
-import { useParticipant } from '@/hooks/useParticipant';
+import { useParticipant, useParticipantStatus } from '@/hooks/useParticipant';
+import { Button } from '@/components/ui/Button';
+import { Loader2 } from 'lucide-react';
 
 export function ProcessingStep() {
-  const { nextStep, t, language, status } = useOnboardingStore();
-  const { error, isTakingLong } = useParticipant();
+  const { nextStep, t, language } = useOnboardingStore();
+  const { isTakingLong } = useParticipant();
+  const { uiState, retryAi, isRetrying } = useParticipantStatus();
 
   useEffect(() => {
-    if (status === 'ready') {
+    if (uiState === 'profile_ready') {
       nextStep();
     }
-  }, [status, nextStep]);
+  }, [uiState, nextStep]);
 
   return (
     <StepWrapper>
@@ -42,12 +45,17 @@ export function ProcessingStep() {
             transition={{ duration: 1.5, repeat: Infinity }}
             className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2"
           >
-            {error ? "Oops!" : t('analyzingProfile')}
+            {uiState === 'error' ? "Oops!" : t('analyzingProfile')}
           </motion.h2>
           
           <div className="text-gray-500 dark:text-gray-400 text-sm space-y-2">
-            {error ? (
-              <p className="text-red-500 font-medium">{error}</p>
+            {uiState === 'error' ? (
+              <div className="flex flex-col items-center gap-4 mt-2">
+                <p className="text-red-500 font-medium">An error occurred while forging your profile.</p>
+                <Button onClick={retryAi} disabled={isRetrying}>
+                  {isRetrying ? <Loader2 className="w-5 h-5 animate-spin" /> : "Retry Analysis"}
+                </Button>
+              </div>
             ) : (
               <>
                 <p>{t('generatingIceBreakers')}</p>

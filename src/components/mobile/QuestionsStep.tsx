@@ -5,13 +5,14 @@ import { StepWrapper } from '@/components/motion/StepWrapper';
 import { Button } from '@/components/ui/Button';
 import { ArrowLeft, Sparkles, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useParticipant } from '@/hooks/useParticipant';
+import { useParticipant, useParticipantStatus } from '@/hooks/useParticipant';
 import { useTranslation } from '@/context/LanguageContext';
 
 export function QuestionsStep() {
-  const { formData, updateFormData, nextStep, prevStep, language, roomId, status, questions } = useOnboardingStore();
+  const { formData, updateFormData, nextStep, prevStep, language, roomId, questions } = useOnboardingStore();
   const { t } = useTranslation();
   const { updateParticipant, loading: isSubmitting, error, isTakingLong } = useParticipant();
+  const { uiState, retryAi, isRetrying } = useParticipantStatus();
   
   const handleAnswerChange = (qId: string, value: string) => {
     updateFormData({ 
@@ -54,7 +55,7 @@ export function QuestionsStep() {
         </div>
 
         <AnimatePresence mode="wait">
-          {status === 'generating_questions' ? (
+          {uiState === 'loading_questions' ? (
             <motion.div
               key="loading"
               initial={{ opacity: 0, y: 20 }}
@@ -66,16 +67,29 @@ export function QuestionsStep() {
               <h2 className="text-2xl font-bold mb-2 text-gray-800 dark:text-gray-100">
                 {t('craftingIceBreakers')}
               </h2>
-              <p className="text-sm text-gray-500 dark:text-gray-400 max-w-xs">
-                Gemini is analyzing your profile to generate personalized questions...
-              </p>
               {isTakingLong && (
                 <p className="mt-4 text-xs text-indigo-500 italic animate-pulse">
                   Taking a bit longer than expected...
                 </p>
               )}
             </motion.div>
-          ) : (
+          ) : uiState === 'error' ? (
+            <motion.div
+              key="error"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="flex flex-col items-center justify-center py-12 text-center"
+            >
+              <h2 className="text-2xl font-bold mb-2 text-red-500">Oops!</h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400 max-w-xs mb-8">
+                {error || "An error occurred while generating your ice-breaker questions."}
+              </p>
+              <Button onClick={retryAi} disabled={isRetrying}>
+                {isRetrying ? <Loader2 className="w-5 h-5 animate-spin" /> : "Retry Connection"}
+              </Button>
+            </motion.div>
+          ) : uiState === 'answering_form' ? (
             <motion.div 
               key="questions"
               initial={{ opacity: 0 }} 
@@ -116,10 +130,6 @@ export function QuestionsStep() {
                 ))}
               </div>
 
-              {error && (
-                <p className="text-red-500 text-xs mb-4 text-center">{error}</p>
-              )}
-
               <Button
                 onClick={handleSubmit}
                 disabled={!isComplete || isSubmitting || !roomId}
@@ -128,7 +138,7 @@ export function QuestionsStep() {
                 {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : t('generateCard')}
               </Button>
             </motion.div>
-          )}
+          ) : null}
         </AnimatePresence>
       </div>
     </StepWrapper>

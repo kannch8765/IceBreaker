@@ -145,3 +145,43 @@ export function useParticipant() {
 
   return { createParticipant, updateParticipant, loading, error, isTakingLong };
 }
+
+export type UIState = "loading_questions" | "answering_form" | "loading_profile" | "profile_ready" | "error";
+
+export function useParticipantStatus() {
+  const { status, questions, roomId, participantId } = useOnboardingStore();
+  const [isRetrying, setIsRetrying] = useState(false);
+
+  let uiState: UIState = "loading_questions"; // default safe state
+
+  if (status === 'error') {
+    uiState = "error";
+  } else if (status === 'ready') {
+    uiState = "profile_ready";
+  } else if (status === 'waiting_for_ai' || status === 'processing_ai') {
+    uiState = "loading_profile";
+  } else if (status === 'answering' && questions.length > 0) {
+    uiState = "answering_form";
+  } else if (status === 'generating_questions' || status === 'processing_questions' || (status === 'answering' && questions.length === 0)) {
+    uiState = "loading_questions";
+  }
+
+  const retryAi = async () => {
+    if (!roomId || !participantId) return;
+    setIsRetrying(true);
+    try {
+      const participantRef = doc(db, 'rooms', roomId, 'participants', participantId);
+      if (uiState === 'loading_profile' || (status === 'error' && questions.length > 0)) {
+        await updateDoc(participantRef, { status: 'waiting_for_ai', errorMessage: null });
+      } else {
+        await updateDoc(participantRef, { status: 'generating_questions', errorMessage: null });
+      }
+    } catch (e) {
+      console.error("Failed to retry AI:", e);
+    } finally {
+      setIsRetrying(false);
+    }
+  };
+
+  return { uiState, retryAi, isRetrying };
+}

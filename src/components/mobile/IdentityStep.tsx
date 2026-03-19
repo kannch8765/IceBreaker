@@ -2,12 +2,12 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useOnboardingStore } from '@/context/OnboardingContext';
 import { StepWrapper } from '@/components/motion/StepWrapper';
-import { User } from 'lucide-react';
+import { User, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { useTranslation } from '@/context/LanguageContext';
 
 export function IdentityStep() {
-  const { formData, updateFormData, nextStep, language } = useOnboardingStore();
+  const { formData, updateFormData, nextStep, prevStep, language } = useOnboardingStore();
   const { t } = useTranslation();
 
   const isFormValid = formData.username.trim().length > 0 
@@ -16,6 +16,11 @@ export function IdentityStep() {
 
   return (
     <StepWrapper>
+      <div className="w-full flex justify-start mb-2">
+        <button onClick={prevStep} className="text-gray-500 p-2">
+          <ArrowLeft size={24} />
+        </button>
+      </div>
       <div className="w-24 h-24 rounded-full bg-purple-100 dark:bg-gray-700 flex items-center justify-center mb-6 shadow-inner">
         <User size={48} className="text-purple-400 dark:text-gray-400" />
       </div>

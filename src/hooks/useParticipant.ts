@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { doc, onSnapshot, setDoc, updateDoc, serverTimestamp, collection, Timestamp } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { useOnboardingStore } from '../context/OnboardingContext';
+import { useTranslation } from '../context/LanguageContext';
 
 export function useParticipant() {
   const { 
@@ -14,9 +15,10 @@ export function useParticipant() {
     setAvatarUrl,
     setQuestions,
     setStatus,
-    formData,
-    language
+    formData
   } = useOnboardingStore();
+  
+  const { language } = useTranslation();
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -33,6 +35,24 @@ export function useParticipant() {
 
     try {
       const participantsRef = collection(db, 'rooms', roomId, 'participants');
+
+      if (participantId) {
+        try {
+          const existingRef = doc(participantsRef, participantId);
+          await updateDoc(existingRef, {
+            username: formData.username,
+            pronoun: formData.pronoun,
+            mood: formData.mood,
+            language: language,
+            status: 'generating_questions',
+          });
+          setLoading(false);
+          return participantId;
+        } catch (updateErr: any) {
+          console.warn("Existing participant not found or update failed, falling back to new.", updateErr);
+        }
+      }
+
       const { getDocs, query, limit } = await import('firebase/firestore');
       const snapshot = await getDocs(query(participantsRef, limit(51)));
       if (snapshot.size >= 50) {
@@ -64,7 +84,7 @@ export function useParticipant() {
       setLoading(false);
       return null;
     }
-  }, [roomId, formData, language, setParticipantId]);
+  }, [roomId, participantId, formData, language, setParticipantId]);
 
   const updateParticipant = useCallback(async (data: any) => {
     if (!roomId || !participantId) return;

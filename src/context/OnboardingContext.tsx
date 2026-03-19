@@ -1,5 +1,5 @@
 "use client";
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { TranslationKey } from '@/lib/translations';
 import { useTranslation, Language } from '@/context/LanguageContext';
@@ -111,11 +111,11 @@ export function OnboardingProvider({ children, initialRoomId }: { children: Reac
     }
   }, [theme]);
 
-  const nextStep = () => setStep((s) => s + 1);
-  const prevStep = () => setStep((s) => Math.max(1, s - 1));
-  const updateFormData = (data: Partial<FormData>) => {
+  const nextStep = useCallback(() => setStep((s) => s + 1), []);
+  const prevStep = useCallback(() => setStep((s) => Math.max(1, s - 1)), []);
+  const updateFormData = useCallback((data: Partial<FormData>) => {
     setFormData((prev) => ({ ...prev, ...data }));
-  };
+  }, []);
 
   return (
     <OnboardingContext.Provider value={{ 

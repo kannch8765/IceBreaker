@@ -22,7 +22,7 @@ export default function HallLanding() {
     try {
       const roomId = await createRoom();
       // Navigate to the unified root with room context and hall mode
-      router.push(`/?room=${roomId}&mode=hall`);
+      router.push(`/hall?room=${roomId}`);
     } catch (err: any) {
       console.error(err);
       setError(err.message || t('failedCreateRoom'));

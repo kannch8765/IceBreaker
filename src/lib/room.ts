@@ -1,5 +1,15 @@
 import { db } from "./firebase";
-import { doc, runTransaction, Timestamp, updateDoc } from "firebase/firestore";
+import { 
+  doc, 
+  runTransaction, 
+  Timestamp, 
+  updateDoc, 
+  collection, 
+  query, 
+  where, 
+  getDocs, 
+  getDoc 
+} from "firebase/firestore";
 
 export function generateRoomId(): string {
   // Avoid unambiguous characters: 0, O, I, 1
@@ -11,6 +21,11 @@ export function generateRoomId(): string {
   return result;
 }
 
+/**
+ * Creates a new room with a self-healing counter check.
+ * If the activeRooms counter is near the threshold, it recalibrates by 
+ * querying the actual number of non-expired, non-closed rooms.
+ */
 export async function createRoom(): Promise<string> {
   // Rate limiting: 1 room per 2 minutes per device
   if (typeof window !== 'undefined') {
@@ -26,8 +41,33 @@ export async function createRoom(): Promise<string> {
   const statsRef = doc(db, "global_stats", "system");
 
   try {
+    // 1. Initial check (Outside transaction for performance)
+    const statsSnap = await getDoc(statsRef);
+    const currentActive = statsSnap.exists() ? statsSnap.data().activeRooms || 0 : 0;
+
+    // 2. Self-Healing Recalibration (Trigger if near limit)
+    // We use 18 as a trigger threshold to catch ghost rooms before we hit the hard cap of 20.
+    if (currentActive >= 18) {
+      const q = query(collection(db, "rooms"), where("status", "!=", "closed"));
+      const snapshot = await getDocs(q);
+      const nowTs = Timestamp.now().toMillis();
+      
+      let actualCount = 0;
+      snapshot.forEach((snap) => {
+        const data = snap.data();
+        if (data.expiresAt && data.expiresAt.toMillis() > nowTs) {
+          actualCount++;
+        }
+      });
+
+      // Update the counter to reflect the true number of active sessions
+      await updateDoc(statsRef, { activeRooms: actualCount });
+    }
+
+    // 3. Atomic Session Creation
     await runTransaction(db, async (transaction) => {
       const statsDoc = await transaction.get(statsRef);
+      
       if (!statsDoc.exists()) {
         // Initialize if not exists
         transaction.set(statsRef, { activeRooms: 1 });

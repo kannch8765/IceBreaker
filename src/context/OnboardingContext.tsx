@@ -40,15 +40,18 @@ type OnboardingContextType = {
 
 const OnboardingContext = createContext<OnboardingContextType | undefined>(undefined);
 
-export function OnboardingProvider({ children }: { children: React.ReactNode }) {
+export function OnboardingProvider({ children, initialRoomId }: { children: React.ReactNode, initialRoomId?: string }) {
   const searchParams = useSearchParams();
-  const [roomId, setRoomId] = useState<string | null>(null);
+  const [roomId, setRoomId] = useState<string | null>(initialRoomId || null);
   
   useEffect(() => {
-    if (searchParams) {
-      setRoomId(searchParams.get('room'));
+    if (initialRoomId) {
+      setRoomId(initialRoomId);
+    } else {
+      const room = searchParams.get('room');
+      if (room) setRoomId(room);
     }
-  }, [searchParams]);
+  }, [initialRoomId, searchParams]);
 
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState<FormData>({
@@ -73,9 +76,9 @@ export function OnboardingProvider({ children }: { children: React.ReactNode }) 
 
     if (savedParticipantId) setParticipantId(savedParticipantId);
     if (savedStep) setStep(parseInt(savedStep, 10));
-    // Only restore roomId if not provided in URL
-    if (savedRoomId && !searchParams.get('room')) setRoomId(savedRoomId);
-  }, [searchParams]);
+    // Only restore roomId if not provided via props
+    if (savedRoomId && !initialRoomId) setRoomId(savedRoomId);
+  }, [initialRoomId]);
 
   // Persistence: Save to localStorage on change
   useEffect(() => {

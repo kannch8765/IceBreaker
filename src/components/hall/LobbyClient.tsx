@@ -13,11 +13,11 @@ import { useTheme } from '@/hooks/useTheme';
 import { useTranslation } from '@/context/LanguageContext';
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher';
 
-interface LobbyClientProps {
-  roomId: string;
-}
+import { useSearchParams } from 'next/navigation';
 
-export default function LobbyClient({ roomId }: LobbyClientProps) {
+export default function LobbyClient() {
+  const searchParams = useSearchParams();
+  const roomId = searchParams.get('room') || '';
   const { theme } = useTheme();
   const router = useRouter();
   const { t } = useTranslation();
@@ -39,7 +39,7 @@ export default function LobbyClient({ roomId }: LobbyClientProps) {
     }
   }, []);
 
-  const joinUrl = `${origin}/?room=${roomId}`;
+  const joinUrl = `${origin}/room?room=${roomId}`;
 
   const handleStart = async () => {
     try {

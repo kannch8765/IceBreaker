@@ -14,7 +14,8 @@ export function useParticipant() {
     setAvatarUrl,
     setQuestions,
     setStatus,
-    formData 
+    formData,
+    language
   } = useOnboardingStore();
 
   const [loading, setLoading] = useState(false);
@@ -48,6 +49,7 @@ export function useParticipant() {
         username: formData.username,
         pronoun: formData.pronoun,
         mood: formData.mood,
+        language: language,
         status: 'generating_questions', // Trigger backend personalized questions
         createdAt: serverTimestamp(),
         expiresAt: expiresAt,
@@ -62,7 +64,7 @@ export function useParticipant() {
       setLoading(false);
       return null;
     }
-  }, [roomId, formData, setParticipantId]);
+  }, [roomId, formData, language, setParticipantId]);
 
   const updateParticipant = useCallback(async (data: any) => {
     if (!roomId || !participantId) return;

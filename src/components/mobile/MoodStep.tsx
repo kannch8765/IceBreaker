@@ -8,12 +8,12 @@ import { Button } from '@/components/ui/Button';
 import { useTranslation } from '@/context/LanguageContext';
 
 const MOODS = [
-  { emoji: '🔥', label: 'Energetic' },
-  { emoji: '😌', label: 'Chill' },
-  { emoji: '🤔', label: 'Curious' },
-  { emoji: '✨', label: 'Inspired' },
-  { emoji: '😎', label: 'Confident' },
-  { emoji: '😴', label: 'Tired' }
+  { emoji: '🔥', label: 'Energetic', key: 'moodEnergetic' },
+  { emoji: '😌', label: 'Chill', key: 'moodChill' },
+  { emoji: '🤔', label: 'Curious', key: 'moodCurious' },
+  { emoji: '✨', label: 'Inspired', key: 'moodInspired' },
+  { emoji: '😎', label: 'Confident', key: 'moodConfident' },
+  { emoji: '😴', label: 'Tired', key: 'moodTired' }
 ];
 
 import { useParticipant } from '@/hooks/useParticipant';
@@ -125,7 +125,7 @@ export function MoodStep() {
                     }`}
                 >
                   <span className="text-4xl mb-2">{m.emoji}</span>
-                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{m.label}</span>
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{t(m.key as any)}</span>
                 </motion.button>
               ))}
             </div>

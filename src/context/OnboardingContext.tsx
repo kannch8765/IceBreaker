@@ -73,9 +73,17 @@ export function OnboardingProvider({ children, initialRoomId }: { children: Reac
     const savedParticipantId = localStorage.getItem('participantId');
     const savedStep = localStorage.getItem('onboardingStep');
     const savedRoomId = localStorage.getItem('roomId');
+    const savedLanguage = localStorage.getItem('preferredLanguage');
 
     if (savedParticipantId) setParticipantId(savedParticipantId);
-    if (savedStep) setStep(parseInt(savedStep, 10));
+    
+    // Force LanguageStep if they haven't picked a language, otherwise restore step
+    if (!savedLanguage) {
+      setStep(1);
+    } else if (savedStep) {
+      setStep(parseInt(savedStep, 10));
+    }
+
     // Only restore roomId if not provided via props
     if (savedRoomId && !initialRoomId) setRoomId(savedRoomId);
   }, [initialRoomId]);

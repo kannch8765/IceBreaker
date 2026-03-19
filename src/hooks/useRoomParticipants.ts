@@ -7,6 +7,7 @@ export interface Participant {
   username: string;
   photo?: string;
   mood?: string;
+  language?: 'en' | 'jp' | 'cn';
   status: 'onboarding' | 'ready';
   expiresAt?: Timestamp;
   [key: string]: any;

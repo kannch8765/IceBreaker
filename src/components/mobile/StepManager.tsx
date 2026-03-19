@@ -1,6 +1,7 @@
 "use client";
 import React from 'react';
 import { useOnboardingStore } from '@/context/OnboardingContext';
+import { LanguageStep } from './LanguageStep';
 import { IdentityStep } from './IdentityStep';
 import { MoodStep } from './MoodStep';
 import { QuestionsStep } from './QuestionsStep';
@@ -21,11 +22,12 @@ export function StepManager() {
       <div className="absolute -bottom-8 left-20 w-64 h-64 bg-pink-300 dark:bg-matrix-green/10 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
 
       <AnimatePresence mode="wait">
-        {step === 1 && <IdentityStep key="step1" />}
-        {step === 2 && <MoodStep key="step2" />}
-        {step === 3 && <QuestionsStep key="step3" />}
-        {step === 4 && <ProcessingStep key="step4" />}
-        {step === 5 && <ResultStep key="step5" />}
+        {step === 1 && <LanguageStep key="step0" />}
+        {step === 2 && <IdentityStep key="step1" />}
+        {step === 3 && <MoodStep key="step2" />}
+        {step === 4 && <QuestionsStep key="step3" />}
+        {step === 5 && <ProcessingStep key="step4" />}
+        {step === 6 && <ResultStep key="step5" />}
       </AnimatePresence>
     </div>
   );

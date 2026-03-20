@@ -12,6 +12,10 @@ export default {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        accent: "var(--accent-primary)",
+        "accent-secondary": "var(--accent-secondary)",
+        border: "var(--border)",
+        muted: "var(--muted)",
         "matrix-green": "#00FF41",
       },
     },

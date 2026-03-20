@@ -76,7 +76,7 @@
 - **src/components/ui:** Primitive components (Buttons, Inputs) with specific rounded styles.
 - **src/components/motion:** Wrapper components for the fly-out/drop-in animations.
 - **src/hooks:** Custom hooks for Firestore real-time listeners and Vertex AI fetching logic.
-- **src/hooks/useTheme.ts:** Logic to switch between the Lilac (Mobile) and Green/Black (Hall) themes.
+- **src/hooks/useTheme.ts:** Logic to switch between the Lilac and Green/Black themes.
 - **src/lib:** Helper functions for the matching algorithm and D3.js data joins.
 
 ## 8. Aesthetic Guidelines (Dual Theme)

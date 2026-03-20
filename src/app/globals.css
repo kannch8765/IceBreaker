@@ -6,6 +6,10 @@
   /* Lilac fusion (Light Mode) */
   --background: #f3e8ff; /* pastel lilac/purple background */
   --foreground: #1c192b; /* dark text */
+  --accent-primary: #7c3aed; /* purple-600 */
+  --accent-secondary: #6366f1; /* indigo-500 */
+  --border: #e5e7eb; /* gray-200 */
+  --muted: #6b7280; /* gray-500 */
 }
 
 /* Explicitly support the .dark class */
@@ -13,6 +17,10 @@
   /* Black and Green fusion (Dark Mode / Hall) */
   --background: #000000;
   --foreground: #00FF41;
+  --accent-primary: #00FF41; /* matrix-green */
+  --accent-secondary: #4ade80; /* green-400 */
+  --border: #1f2937; /* gray-800 */
+  --muted: #9ca3af; /* gray-400 */
 }
 
 body {

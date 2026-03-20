@@ -154,7 +154,7 @@ export default function LobbyClient() {
                     className="bg-white/60 dark:bg-gray-900/50 backdrop-blur-md border border-gray-200 dark:border-gray-800 py-5 px-6 rounded-2xl flex items-center gap-4 hover:border-purple-500/50 dark:hover:border-[#00FF41]/50 transition-colors"
                   >
                      <div className="w-3 h-3 rounded-full bg-purple-500 dark:bg-[#00FF41] shadow-[0_0_10px_purple] dark:shadow-[0_0_10px_#00FF41] animate-pulse"></div>
-                     <span className="font-semibold text-lg text-gray-800 dark:text-gray-200 truncate">{p.username || 'Anonymous'}</span>
+                     <span className="font-semibold text-lg text-gray-800 dark:text-gray-200 truncate">{p.username || t('anonymous')}</span>
                   </motion.div>
                 ))}
               </AnimatePresence>

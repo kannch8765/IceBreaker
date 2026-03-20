@@ -69,7 +69,7 @@ export function QuestionsStep() {
               </h2>
               {isTakingLong && (
                 <p className="mt-4 text-xs text-indigo-500 italic animate-pulse">
-                  Taking a bit longer than expected...
+                  {t('takingLonger')}
                 </p>
               )}
             </motion.div>
@@ -81,12 +81,12 @@ export function QuestionsStep() {
               exit={{ opacity: 0, y: -20 }}
               className="flex flex-col items-center justify-center py-12 text-center"
             >
-              <h2 className="text-2xl font-bold mb-2 text-red-500">Oops!</h2>
+              <h2 className="text-2xl font-bold mb-2 text-red-500">{t('oops')}</h2>
               <p className="text-sm text-gray-500 dark:text-gray-400 max-w-xs mb-8">
-                {error || "An error occurred while generating your ice-breaker questions."}
+                {error || t('generatingIceBreakersError')}
               </p>
               <Button onClick={retryAi} disabled={isRetrying}>
-                {isRetrying ? <Loader2 className="w-5 h-5 animate-spin" /> : "Retry Connection"}
+                {isRetrying ? <Loader2 className="w-5 h-5 animate-spin" /> : t('retryConnection')}
               </Button>
             </motion.div>
           ) : uiState === 'answering_form' ? (
@@ -119,7 +119,7 @@ export function QuestionsStep() {
                       rows={2}
                       value={formData.answers[q.id] || ''}
                       onChange={(e) => handleAnswerChange(q.id, e.target.value)}
-                      placeholder="Your answer..."
+                      placeholder={t('yourAnswer')}
                       maxLength={100}
                       className="w-full px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-900 border-none focus:outline-none focus:ring-2 focus:ring-indigo-300 resize-none text-sm dark:text-gray-200"
                     />

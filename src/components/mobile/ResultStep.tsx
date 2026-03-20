@@ -36,7 +36,7 @@ export function ResultStep() {
           </div>
           
           <h2 className="text-3xl font-extrabold text-gray-800 dark:text-gray-100 tracking-tight">
-            {formData.username || "Anonymous"}
+            {formData.username || t('anonymous')}
           </h2>
           <p className="text-sm font-medium text-purple-600 dark:text-purple-400 mt-1 uppercase tracking-widest">
             {formData.pronoun || t('anyPronouns')}
@@ -47,7 +47,7 @@ export function ResultStep() {
         <div className="px-8 pb-6">
           <div className="flex justify-center gap-2 mb-6">
             <span className="px-3 py-1 bg-gray-100 dark:bg-gray-900 rounded-full text-xs font-semibold text-gray-600 dark:text-gray-300">
-              {t('vibe')}: {formData.mood || "Mysterious"}
+              {t('vibe')}: {formData.mood || t('mysterious')}
             </span>
           </div>
 
@@ -62,7 +62,7 @@ export function ResultStep() {
                 </p>
               </div>
             )) : (
-              <p className="text-xs text-gray-400 italic">No topics generated.</p>
+              <p className="text-xs text-gray-400 italic">{t('noTopicsGenerated')}</p>
             )}
           </div>
 

@@ -42,11 +42,11 @@ export function IdentityStep() {
             type="text"
             value={formData.username}
             onChange={(e) => updateFormData({ username: e.target.value })}
-            placeholder="e.g. Alex"
+            placeholder={t('egName')}
             maxLength={15}
             className="w-full px-4 py-3 rounded-2xl bg-white dark:bg-gray-900 border border-purple-100 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-400 outline-none transition-all shadow-sm"
           />
-          <p className="text-xs text-gray-400 mt-1 ml-1 pl-2">Max 15 characters</p>
+          <p className="text-xs text-gray-400 mt-1 ml-1 pl-2">{t('maxChars')}</p>
         </div>
 
           <div>
@@ -58,7 +58,7 @@ export function IdentityStep() {
               onChange={(e) => updateFormData({ pronoun: e.target.value })}
               className="w-full px-4 py-3 rounded-2xl bg-white dark:bg-gray-900 border border-purple-100 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-400 outline-none transition-all shadow-sm appearance-none"
             >
-              <option value="" disabled>Select</option>
+              <option value="" disabled>{t('selectDropdown')}</option>
               <option value="he/him">he/him</option>
               <option value="she/her">she/her</option>
               <option value="they/them">they/them</option>

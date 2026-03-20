@@ -45,15 +45,15 @@ export function ProcessingStep() {
             transition={{ duration: 1.5, repeat: Infinity }}
             className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2"
           >
-            {uiState === 'error' ? "Oops!" : t('analyzingProfile')}
+            {uiState === 'error' ? t('oops') : t('analyzingProfile')}
           </motion.h2>
           
           <div className="text-gray-500 dark:text-gray-400 text-sm space-y-2">
             {uiState === 'error' ? (
               <div className="flex flex-col items-center gap-4 mt-2">
-                <p className="text-red-500 font-medium">An error occurred while forging your profile.</p>
+                <p className="text-red-500 font-medium">{t('forgingProfileError')}</p>
                 <Button onClick={retryAi} disabled={isRetrying}>
-                  {isRetrying ? <Loader2 className="w-5 h-5 animate-spin" /> : "Retry Analysis"}
+                  {isRetrying ? <Loader2 className="w-5 h-5 animate-spin" /> : t('retryAnalysis')}
                 </Button>
               </div>
             ) : (
@@ -65,7 +65,7 @@ export function ProcessingStep() {
                     animate={{ opacity: 1, y: 0 }}
                     className="text-indigo-500 dark:text-indigo-400 italic"
                   >
-                    Still working... Vertex AI is taking a moment to craft your perfect topics.
+                    {t('stillWorkingAI')}
                   </motion.p>
                 )}
               </>

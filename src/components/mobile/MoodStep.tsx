@@ -83,7 +83,7 @@ export function MoodStep() {
     } catch (err: any) {
       console.error("Camera error:", err);
       // Fallback message handles any translation missing keys
-      const errorMsg = (t as any)('cameraError') || "Could not access camera. Please allow permissions.";
+      const errorMsg = t('cameraError');
       setCameraError(errorMsg);
     }
   };
@@ -119,12 +119,12 @@ export function MoodStep() {
     console.log("STEP 0: handleUsePhoto triggered");
     if (!capturedBlob) {
       console.error("STEP 0 ERROR: Captured blob is null.");
-      setCameraError("Image capture failed. Please retake.");
+      setCameraError(t('imageCaptureFailed'));
       return;
     }
     if (!roomId) {
       console.error("STEP 0 ERROR: No Room ID found.");
-      setCameraError("Room ID missing. Cannot upload.");
+      setCameraError(t('roomIdMissing'));
       return;
     }
 
@@ -152,11 +152,11 @@ export function MoodStep() {
         nextStep();
       } else {
          console.warn("STEP 6 ERROR: Empty ID returned from createParticipant.");
-         setCameraError("Failed to attach image to room context.");
+         setCameraError(t('failedToAttach'));
       }
     } catch (err: any) {
       console.error("STEP ERROR: Exception caught during upload/create sequence:", err);
-      setCameraError(err.message || "Failed to upload image. Please try again.");
+      setCameraError(err.message || t('failedToUpload'));
     } finally {
       console.log("STEP 7: finally block executed. Resetting isUploading state.");
       setIsUploading(false);
@@ -291,7 +291,7 @@ export function MoodStep() {
               <ArrowLeft size={24} />
             </button>
             <motion.h2 key={`snap-${language}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-2xl font-bold mb-2 text-center text-gray-800 dark:text-gray-100">
-              {(t as any)('snapVibe') || "Capture your vibe"}
+              {t('captureYourVibe')}
             </motion.h2>
 
             <div className="w-full max-w-sm aspect-[3/4] bg-black rounded-3xl overflow-hidden relative shadow-inner">
@@ -300,7 +300,7 @@ export function MoodStep() {
                   <CameraIcon size={48} className="text-red-400 mb-4" />
                   <p className="text-gray-700 dark:text-gray-300 font-medium mb-4">{cameraError}</p>
                   <Button onClick={() => setView('chooser')} className="bg-white text-gray-800 hover:bg-gray-100 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 border-2">
-                    Go Back
+                    {t('goBack')}
                   </Button>
                 </div>
               ) : previewUrl ? (
@@ -370,7 +370,7 @@ export function MoodStep() {
             
             {(isUploading || isCreating) && (
               <p className="text-purple-600 dark:text-purple-400 font-medium animate-pulse mt-2">
-                {isUploading ? "Uploading visual vibe..." : "Connecting..."}
+                {isUploading ? t('uploadingVibe') : t('connecting')}
               </p>
             )}
           </motion.div>

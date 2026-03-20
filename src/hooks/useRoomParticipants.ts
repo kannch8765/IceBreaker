@@ -8,7 +8,7 @@ export interface Participant {
   photo?: string;
   mood?: string;
   language?: 'en' | 'jp' | 'cn';
-  status: 'onboarding' | 'ready';
+  status: 'onboarding' | 'generating_questions' | 'answering' | 'waiting_for_ai' | 'processing_ai' | 'ready';
   expiresAt?: Timestamp;
   [key: string]: any;
 }

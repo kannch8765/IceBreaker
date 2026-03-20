@@ -14,6 +14,10 @@ import { useTranslation } from '@/context/LanguageContext';
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher';
 import { useSearchParams } from 'next/navigation';
 import { ResultPage } from './ResultPage';
+import { useParticipant } from '@/hooks/useParticipant';
+import { generateMockParticipant, generateMockQA } from '@/dev/generateMockParticipant';
+import { doc, updateDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 
 export type SessionState = 'waiting' | 'matched' | 'closed';
 
@@ -26,14 +30,59 @@ export default function LobbyClient() {
   
   const { participants, loading } = useRoomParticipants(roomId);
   const { status } = useRoomState(roomId);
+  const { createParticipant } = useParticipant(roomId);
   const [isClosing, setIsClosing] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
+  const [isSeeding, setIsSeeding] = useState(false);
+  const [processingIds, setProcessingIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     if (status === 'closed') {
        router.push('/hall');
     }
   }, [status, router]);
+
+  // Observer to auto-answer seeded participants
+  useEffect(() => {
+    if (process.env.NODE_ENV !== 'development' || isSeeding) return;
+
+    // Find the NEXT seed participant that needs answering
+    const nextToProcess = participants.find(p => 
+      p.isSeed && 
+      p.status === 'answering' && 
+      p.questions?.length > 0 && 
+      (!p.qa || p.qa.length === 0) &&
+      !processingIds.has(p.id)
+    );
+
+    if (!nextToProcess) return;
+
+    // Mark as processing to avoid redundant triggers
+    setProcessingIds(prev => new Set(prev).add(nextToProcess.id));
+
+    // Sequential/Throttled execution (500ms delay)
+    const timer = setTimeout(async () => {
+      try {
+        const mockQA = generateMockQA(nextToProcess.questions);
+        const pRef = doc(db, 'rooms', roomId, 'participants', nextToProcess.id);
+        
+        await updateDoc(pRef, {
+          qa: mockQA,
+          status: 'waiting_for_ai'
+        });
+      } catch (err) {
+        console.error(`Auto-answer failed for ${nextToProcess.id}:`, err);
+      } finally {
+        setProcessingIds(prev => {
+          const next = new Set(prev);
+          next.delete(nextToProcess.id);
+          return next;
+        });
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [participants, processingIds, roomId, isSeeding]);
 
   const [origin, setOrigin] = useState('https://icebreaker.app');
   useEffect(() => {
@@ -62,6 +111,34 @@ export default function LobbyClient() {
     } catch (err) {
       console.error(err);
       setIsClosing(false);
+    }
+  };
+
+  const seedParticipants = async () => {
+    if (process.env.NODE_ENV !== 'development' || isSeeding) return;
+    if (participants.length + 20 > 50) {
+      alert(`Only ${50 - participants.length} slots left. Cannot seed 20.`);
+      return;
+    }
+    setIsSeeding(true);
+    try {
+      const promises = [];
+      for (let i = 1; i <= 20; i++) {
+        const mockUser = generateMockParticipant(i);
+        // Add random suffix to avoid frontend name collisions
+        const uniqueName = `${mockUser.username}_${Math.random().toString(36).substring(7)}`;
+        const seedPayload = { 
+          ...mockUser, 
+          username: uniqueName, 
+          isSeed: true 
+        };
+        promises.push(createParticipant(seedPayload, { skipStore: true }));
+      }
+      await Promise.all(promises);
+    } catch (err) {
+      console.error("Seeding failed:", err);
+    } finally {
+      setIsSeeding(false);
     }
   };
 
@@ -136,6 +213,29 @@ export default function LobbyClient() {
               {t('killSwitch')}
             </button>
           </motion.div>
+
+          {/* Dev-only Seeder */}
+          {process.env.NODE_ENV === 'development' && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="mt-4 w-full max-w-md"
+            >
+              <button 
+                onClick={seedParticipants}
+                disabled={isSeeding || participants.length >= 50}
+                className="w-full py-4 bg-amber-500/10 border-2 border-dashed border-amber-500/50 text-amber-500 font-bold text-lg rounded-2xl hover:bg-amber-500 hover:text-black transition-all flex items-center justify-center gap-3 group"
+              >
+                {isSeeding ? (
+                  <Loader2 className="w-6 h-6 animate-spin" />
+                ) : (
+                  <span className="w-2 h-2 rounded-full bg-amber-500 group-hover:bg-black animate-pulse"></span>
+                )}
+                {participants.length >= 50 ? "Room Full" : "Seed 20 Participants"}
+              </button>
+              <p className="text-[10px] text-amber-500/50 uppercase tracking-[0.2em] text-center mt-2 font-bold">Development Tool</p>
+            </motion.div>
+          )}
         </div>
 
         {/* Right Section: Real-time Tracker */}

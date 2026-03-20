@@ -1,23 +1,30 @@
 "use client";
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useContext } from 'react';
 import { doc, onSnapshot, setDoc, updateDoc, serverTimestamp, collection, Timestamp } from 'firebase/firestore';
 import { db } from '../lib/firebase';
-import { useOnboardingStore } from '../context/OnboardingContext';
+import { useOnboardingStore, OnboardingContext } from '../context/OnboardingContext';
 import { useTranslation } from '../context/LanguageContext';
 
-export function useParticipant() {
-  const { 
-    roomId, 
-    participantId, 
-    setParticipantId, 
-    setAiTopics, 
-    setAvatarUrl,
-    setQuestions,
-    setStatus,
-    setMatchedParticipant,
-    formData
-  } = useOnboardingStore();
+export function useParticipant(explicitRoomId?: string) {
+  const context = useContext(OnboardingContext);
+  
+  // Use context if available, otherwise fallback to explicit or empty values
+  const roomId = explicitRoomId || context?.roomId || null;
+  const participantId = context?.participantId || null;
+  const setParticipantId = context?.setParticipantId || (() => {});
+  const setAiTopics = context?.setAiTopics || (() => {});
+  const setAvatarUrl = context?.setAvatarUrl || (() => {});
+  const setQuestions = context?.setQuestions || (() => {});
+  const setStatus = context?.setStatus || (() => {});
+  const setMatchedParticipant = context?.setMatchedParticipant || (() => {});
+  const formData = context?.formData || { 
+    username: '', 
+    pronoun: '', 
+    mood: '', 
+    inputMode: 'mood', 
+    answers: {} 
+  };
   
   const { language } = useTranslation();
 
@@ -25,7 +32,7 @@ export function useParticipant() {
   const [error, setError] = useState<string | null>(null);
   const [isTakingLong, setIsTakingLong] = useState(false);
 
-  const createParticipant = useCallback(async (overrideData?: any) => {
+  const createParticipant = useCallback(async (overrideData?: any, options?: { skipStore?: boolean }) => {
     if (!roomId) {
       setError("No room ID found in URL");
       return null;
@@ -39,7 +46,7 @@ export function useParticipant() {
     try {
       const participantsRef = collection(db, 'rooms', roomId, 'participants');
 
-      if (participantId) {
+      if (participantId && !options?.skipStore) {
         try {
           const existingRef = doc(participantsRef, participantId);
           const payload = {
@@ -79,7 +86,8 @@ export function useParticipant() {
         // Strictly enforce mode-specific data
         mood: mergedData.inputMode === 'mood' ? mergedData.mood : '',
         imageUrl: mergedData.inputMode === 'camera' ? (mergedData.imageUrl || null) : null,
-        language: language,
+        language: mergedData.language || language,
+        isSeed: mergedData.isSeed || false,
         status: 'generating_questions', // Trigger backend personalized questions
         createdAt: serverTimestamp(),
         expiresAt: expiresAt,
@@ -87,7 +95,9 @@ export function useParticipant() {
 
       await setDoc(newParticipantRef, payload);
 
-      setParticipantId(newId);
+      if (!options?.skipStore) {
+        setParticipantId(newId);
+      }
       setLoading(false);
       return newId;
     } catch (err: any) {
@@ -131,6 +141,7 @@ export function useParticipant() {
         if (data.aiTopics) setAiTopics(data.aiTopics);
         if (data.avatarUrl) setAvatarUrl(data.avatarUrl);
         if (data.matchedParticipant) {
+          console.log("Firestore sync matchedParticipant:", data.matchedParticipant);
           setMatchedParticipant(data.matchedParticipant);
         }
 
@@ -156,7 +167,7 @@ export function useParticipant() {
       unsubscribe();
       clearTimeout(hintTimeoutId);
     };
-  }, [roomId, participantId, setAiTopics, setAvatarUrl, setQuestions, setStatus]);
+  }, [roomId, participantId, setAiTopics, setAvatarUrl, setQuestions, setStatus, setMatchedParticipant]);
 
   return { createParticipant, updateParticipant, loading, error, isTakingLong };
 }

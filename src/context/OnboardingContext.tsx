@@ -10,6 +10,8 @@ type FormData = {
   username: string;
   pronoun: string;
   mood: string;
+  inputMode: 'mood' | 'camera';
+  imageUrl?: string;
   answers: Record<string, string>; // questionId -> answer
 };
 
@@ -58,6 +60,7 @@ export function OnboardingProvider({ children, initialRoomId }: { children: Reac
     username: '',
     pronoun: '',
     mood: '',
+    inputMode: 'mood',
     answers: {},
   });
   const { language, setLanguage, t } = useTranslation();

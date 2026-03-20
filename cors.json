@@ -1,0 +1,8 @@
+[
+  {
+    "origin": ["https://gdg-hackathon-2026-aquila314.web.app"],
+    "method": ["GET", "POST", "PUT"],
+    "maxAgeSeconds": 3600,
+    "responseHeader": ["Content-Type"]
+  }
+]

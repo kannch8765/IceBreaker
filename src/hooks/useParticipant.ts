@@ -43,6 +43,8 @@ export function useParticipant() {
             username: formData.username,
             pronoun: formData.pronoun,
             mood: formData.mood,
+            inputMode: formData.inputMode,
+            ...(formData.imageUrl ? { imageUrl: formData.imageUrl } : {}),
             language: language,
             status: 'generating_questions',
           });
@@ -69,6 +71,8 @@ export function useParticipant() {
         username: formData.username,
         pronoun: formData.pronoun,
         mood: formData.mood,
+        inputMode: formData.inputMode,
+        ...(formData.imageUrl ? { imageUrl: formData.imageUrl } : {}),
         language: language,
         status: 'generating_questions', // Trigger backend personalized questions
         createdAt: serverTimestamp(),

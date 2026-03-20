@@ -15,6 +15,7 @@ export function useParticipant() {
     setAvatarUrl,
     setQuestions,
     setStatus,
+    setMatchedParticipants,
     formData
   } = useOnboardingStore();
   
@@ -122,6 +123,7 @@ export function useParticipant() {
         if (data.questions) setQuestions(data.questions);
         if (data.aiTopics) setAiTopics(data.aiTopics);
         if (data.avatarUrl) setAvatarUrl(data.avatarUrl);
+        if (data.matchedParticipants) setMatchedParticipants(data.matchedParticipants);
 
         if (data.status === 'ready' || data.status === 'answering' || data.status === 'error') {
           clearTimeout(hintTimeoutId);

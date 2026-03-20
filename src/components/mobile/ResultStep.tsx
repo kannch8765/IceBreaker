@@ -6,7 +6,7 @@ import { CheckCircle, Share2, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 
 export function ResultStep() {
-  const { formData, t, language, aiTopics, avatarUrl } = useOnboardingStore();
+  const { formData, t, language, aiTopics, avatarUrl, matchedParticipants } = useOnboardingStore();
 
   return (
     <motion.div
@@ -43,7 +43,7 @@ export function ResultStep() {
           </p>
         </div>
 
-        {/* Info & Topics */}
+        {/* Info & Matches Section */}
         <div className="px-8 pb-6">
           <div className="flex justify-center gap-2 mb-6">
             <span className="px-3 py-1 bg-gray-100 dark:bg-gray-900 rounded-full text-xs font-semibold text-gray-600 dark:text-gray-300">
@@ -51,7 +51,40 @@ export function ResultStep() {
             </span>
           </div>
 
-          <div className="w-full space-y-3 mb-6">
+          {/* New Match Section (Moved and Upgraded) */}
+          <div className="border-t border-b border-indigo-50 dark:border-gray-700/50 py-6 mb-6">
+            <motion.p key={`meet-${language}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-sm font-bold text-gray-500 dark:text-gray-400 mb-4 text-center uppercase tracking-widest">
+              {t('peopleMeet')}
+            </motion.p>
+            <div className="flex justify-center items-center -space-x-4">
+              {matchedParticipants && matchedParticipants.length > 0 ? (
+                matchedParticipants.map((p: any, idx: number) => (
+                  <motion.div
+                    key={p.uid || idx}
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ delay: idx * 0.1 }}
+                    className="w-14 h-14 rounded-full border-4 border-white dark:border-gray-800 flex justify-center items-center text-2xl z-[30] shadow-md overflow-hidden bg-white dark:bg-gray-900"
+                    style={{ zIndex: 30 - idx }}
+                  >
+                    {p.avatarUrl ? (
+                      <img src={p.avatarUrl} alt={p.username || 'User'} className="w-full h-full object-cover" />
+                    ) : (
+                      "🦊"
+                    )}
+                  </motion.div>
+                ))
+              ) : (
+                <>
+                  <div className="w-14 h-14 rounded-full bg-blue-100 border-4 border-white dark:border-gray-800 flex justify-center items-center text-2xl z-30 shadow-md">🐶</div>
+                  <div className="w-14 h-14 rounded-full bg-pink-100 border-4 border-white dark:border-gray-800 flex justify-center items-center text-2xl z-20 shadow-md">🐱</div>
+                  <div className="w-14 h-14 rounded-full bg-green-100 border-4 border-white dark:border-gray-800 flex justify-center items-center text-2xl z-10 shadow-md">🐰</div>
+                </>
+              )}
+            </div>
+          </div>
+
+          <div className="w-full space-y-3 mb-2">
             <h3 className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-2">
               <MessageCircle size={14} /> {t('aiIceBreakers')}
             </h3>
@@ -65,22 +98,6 @@ export function ResultStep() {
               <p className="text-xs text-gray-400 italic">{t('noTopicsGenerated')}</p>
             )}
           </div>
-
-          {/* New Match Section */}
-          <div className="border-t border-gray-100 dark:border-gray-700/50 pt-4 mb-6">
-            <motion.p key={`meet-${language}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-3 text-center">
-              {t('peopleMeet')}
-            </motion.p>
-            <div className="flex justify-center items-center -space-x-3">
-              <div className="w-10 h-10 rounded-full bg-blue-100 border-2 border-white dark:border-gray-800 flex justify-center items-center text-lg z-30 shadow-sm">🐶</div>
-              <div className="w-10 h-10 rounded-full bg-pink-100 border-2 border-white dark:border-gray-800 flex justify-center items-center text-lg z-20 shadow-sm">🐱</div>
-              <div className="w-10 h-10 rounded-full bg-green-100 border-2 border-white dark:border-gray-800 flex justify-center items-center text-lg z-10 shadow-sm">🐰</div>
-            </div>
-          </div>
-
-          <Button className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-gray-900 to-gray-800 dark:from-white dark:to-gray-200 dark:text-gray-900 text-white shadow-xl">
-            <Share2 size={18} /> <motion.span key={`btn-${language}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>{t('addToWallet')}</motion.span>
-          </Button>
         </div>
         
       </div>

@@ -14,7 +14,7 @@
     ],
     "rewrites": [
       {
-        "source": "**",
+        "source": "/((?!_next).*)",
         "destination": "/index.html"
       }
     ]

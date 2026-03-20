@@ -38,6 +38,8 @@ type OnboardingContextType = {
   setAvatarUrl: (url: string | null) => void;
   status: string | null;
   setStatus: (status: string | null) => void;
+  matchedParticipants: any[];
+  setMatchedParticipants: (matches: any[]) => void;
 };
 
 const OnboardingContext = createContext<OnboardingContextType | undefined>(undefined);
@@ -70,6 +72,7 @@ export function OnboardingProvider({ children, initialRoomId }: { children: Reac
   const [status, setStatus] = useState<string | null>(null);
   const [aiTopics, setAiTopics] = useState<string[]>([]);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [matchedParticipants, setMatchedParticipants] = useState<any[]>([]);
 
   // Persistence: Load from localStorage on mount
   useEffect(() => {
@@ -132,7 +135,8 @@ export function OnboardingProvider({ children, initialRoomId }: { children: Reac
       questions, setQuestions,
       aiTopics, setAiTopics,
       avatarUrl, setAvatarUrl,
-      status, setStatus
+      status, setStatus,
+      matchedParticipants, setMatchedParticipants
     }}>
       {children}
     </OnboardingContext.Provider>

@@ -1,6 +1,8 @@
 import React from 'react';
 import { useTranslation } from '@/context/LanguageContext';
 import { motion } from 'framer-motion';
+import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher';
+import { ThemeToggle } from '@/components/ui/ThemeToggle';
 
 export const ResultPage = () => {
   const { t } = useTranslation();
@@ -9,8 +11,13 @@ export const ResultPage = () => {
     <motion.div 
       initial={{ opacity: 0 }} 
       animate={{ opacity: 1 }} 
-      className="flex flex-col items-center justify-center h-full min-h-screen text-center px-6 transition-colors duration-500 bg-white text-gray-900 dark:bg-black dark:text-gray-100"
+      className="relative flex flex-col items-center justify-center h-full min-h-screen text-center px-6 transition-colors duration-500 bg-background text-foreground"
     >
+      {/* Global Controls Overlay */}
+      <div className="absolute top-4 right-4 z-50 flex items-center gap-3">
+        <LanguageSwitcher />
+        <ThemeToggle />
+      </div>
       <motion.div 
         initial={{ scale: 0.8, y: 20 }}
         animate={{ scale: 1, y: 0 }}

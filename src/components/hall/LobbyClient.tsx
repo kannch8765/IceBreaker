@@ -13,6 +13,7 @@ import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher';
 import { useSearchParams } from 'next/navigation';
 import { ResultPage } from './ResultPage';
 import { useTheme } from '@/hooks/useTheme';
+import { ThemeToggle } from '@/components/ui/ThemeToggle';
 
 export type SessionState = 'waiting' | 'matched' | 'closed';
 
@@ -89,6 +90,11 @@ export default function LobbyClient() {
 
   return (
     <div className="relative min-h-screen bg-background text-foreground overflow-hidden flex transition-colors duration-500">
+      {/* Global Controls Overlay */}
+      <div className="absolute top-4 right-4 z-50 flex items-center gap-3">
+        <LanguageSwitcher />
+        <ThemeToggle />
+      </div>
       
       {/* ── Left panel: QR + controls ───────────────────────────── */}
       <div className="relative z-20 flex flex-col justify-between items-center gap-8 px-10 py-12 w-[400px] shrink-0 bg-white/5 dark:bg-black/20 backdrop-blur-md border-r border-gray-200 dark:border-white/10 transition-colors duration-500">
@@ -149,12 +155,7 @@ export default function LobbyClient() {
           </motion.div>
         </div>
 
-        {/* Global Controls & Host controls */}
         <div className="w-full space-y-6">
-           {/* Top-right controls */}
-          <div className="flex items-center justify-center gap-4">
-            <LanguageSwitcher />
-          </div>
 
           <motion.div
             initial={{ opacity: 0, y: 30 }}

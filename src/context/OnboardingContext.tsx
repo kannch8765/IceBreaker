@@ -42,7 +42,7 @@ type OnboardingContextType = {
   setMatchedParticipant: (match: any | null) => void;
 };
 
-const OnboardingContext = createContext<OnboardingContextType | undefined>(undefined);
+export const OnboardingContext = createContext<OnboardingContextType | undefined>(undefined);
 
 export function OnboardingProvider({ children, initialRoomId }: { children: React.ReactNode, initialRoomId?: string }) {
   const searchParams = useSearchParams();

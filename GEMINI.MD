@@ -63,7 +63,7 @@
     1. Clearly state the file path (e.g., `docs/walkthrough/xxx.md`)
     2. Ensure the document is complete, structured, and production-ready
     3. Provide a brief summary in chat (NOT the full document)
-    
+  
 ## 6. Frontend Architecture (View Separation)
 - **Event Hall View (Desktop):** High-performance landing page dedicated to the Live Network Graph using D3.js. Prioritize visual impact and real-time data streaming from Firestore.
 - **User View (Mobile):** A responsive, form-driven interface for the introduction flow (username, mood, and questions).

@@ -12,7 +12,7 @@ import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher';
 export default function HallLanding() {
   const router = useRouter();
   const { theme } = useTheme();
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const [isCreating, setIsCreating] = useState(false);
   const [error, setError] = useState('');
 
@@ -41,7 +41,7 @@ export default function HallLanding() {
       <motion.div
         className="absolute inset-0 z-0 pointer-events-none opacity-20"
         style={{
-          backgroundImage: theme === 'light' 
+          backgroundImage: theme === 'light'
             ? 'linear-gradient(to bottom, transparent 50%, rgba(139, 92, 246, 0.15) 51%, transparent 51%)'
             : 'linear-gradient(to bottom, transparent 50%, rgba(0, 255, 65, 0.1) 51%, transparent 51%)',
           backgroundSize: '100% 4px',
@@ -58,11 +58,18 @@ export default function HallLanding() {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="max-w-2xl"
         >
-          <h1 className="text-6xl md:text-8xl font-black mb-6 tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-purple-600 dark:from-white via-indigo-500 dark:via-green-400 to-purple-400 dark:to-[#00FF41]">
-            {t('helloNexus')}
+          <h1
+            className={`font-black mb-4 tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-purple-600 dark:from-white via-indigo-500 dark:via-green-400 to-purple-400 dark:to-[#00FF41] 
+            ${language === 'en' ? 'text-7xl md:text-9xl' : 'text-7xl md:text-9xl'}`}
+          >
+            {t('appTitle')}
           </h1>
-          <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-400 mb-12 max-w-lg leading-relaxed">
-            {t('initHub')}
+
+          <p
+            className={`font-bold mb-8 text-gray-800 dark:text-gray-100 
+            ${language === 'en' ? 'text-2xl md:text-3xl' : 'text-3xl md:text-4xl tracking-widest'}`}
+          >
+            {t('tagline')}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-6">
@@ -75,7 +82,7 @@ export default function HallLanding() {
             >
               {isCreating ? t('initializing') : t('quickSetup')}
             </motion.button>
-            
+
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -85,9 +92,9 @@ export default function HallLanding() {
               {t('manualSetup')}
             </motion.button>
           </div>
-          
+
           {error && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               className="mt-6 text-red-500 font-medium"

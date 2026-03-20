@@ -1,37 +1,48 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { QRCodeSVG } from 'qrcode.react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRoomParticipants, useRoomState } from '@/hooks/useRoomParticipants';
 import { closeRoom, startRoomSession } from '@/lib/room';
-import D3Background from '@/components/hall/D3Background';
+import NexusMapCanvas from '@/components/hall/NexusMapCanvas';
 import { Loader2 } from 'lucide-react';
-import { ThemeToggle } from '@/components/ui/ThemeToggle';
-import { useTheme } from '@/hooks/useTheme';
 import { useTranslation } from '@/context/LanguageContext';
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher';
 import { useSearchParams } from 'next/navigation';
 import { ResultPage } from './ResultPage';
+import { useTheme } from '@/hooks/useTheme';
+import { ThemeToggle } from '@/components/ui/ThemeToggle';
 
 export type SessionState = 'waiting' | 'matched' | 'closed';
 
 export default function LobbyClient() {
   const searchParams = useSearchParams();
   const roomId = searchParams.get('room') || '';
-  const { theme } = useTheme();
   const router = useRouter();
   const { t } = useTranslation();
-  
+  const { theme } = useTheme();
+
   const { participants, loading } = useRoomParticipants(roomId);
   const { status } = useRoomState(roomId);
   const [isClosing, setIsClosing] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
+  const [viewMode, setViewMode] = useState<'graph' | 'list'>('graph');
+
+  // Demo: add fake nodes for visual testing
+  const [demoNodes, setDemoNodes] = useState<{ uid: string; traitVector?: number[] }[]>([]);
+  const demoCounter = useRef(0);
+  const addDemoNode = () => {
+    setDemoNodes(prev => [...prev, { 
+      uid: `demo_${demoCounter.current++}`,
+      traitVector: [Math.random(), Math.random(), Math.random(), Math.random(), Math.random()]
+    }]);
+  };
 
   useEffect(() => {
     if (status === 'closed') {
-       router.push('/hall');
+      router.push('/hall');
     }
   }, [status, router]);
 
@@ -65,7 +76,6 @@ export default function LobbyClient() {
     }
   };
 
-
   if (loading) {
     return (
       <div className="min-h-screen bg-black text-white flex items-center justify-center">
@@ -79,119 +89,185 @@ export default function LobbyClient() {
   }
 
   return (
-    <div className="relative min-h-screen bg-background text-foreground overflow-hidden transition-colors duration-500">
-      <div className="absolute top-4 right-4 z-50 flex items-center gap-2">
-        <LanguageSwitcher />
-        <ThemeToggle />
-      </div>
-      <D3Background theme={theme} />
-      <div className="absolute inset-0 bg-white/40 dark:bg-black/50 z-0 backdrop-blur-sm transition-colors duration-500"></div>
-
-      <div className="relative z-10 container mx-auto px-8 py-12 flex flex-col lg:flex-row min-h-screen gap-12">
+    <div className="relative min-h-screen bg-background text-foreground overflow-hidden flex transition-colors duration-500">
+      
+      {/* ── Left panel: QR + controls ───────────────────────────── */}
+      <div className="relative z-20 flex flex-col justify-between items-center gap-8 px-10 py-12 w-[400px] shrink-0 bg-white/5 dark:bg-black/20 backdrop-blur-md border-r border-gray-200 dark:border-white/10 transition-colors duration-500">
         
-        {/* Left Section: Connection Info */}
-        <div className="flex-1 flex flex-col justify-center items-center lg:items-start lg:ml-12">
-          <motion.div 
-            initial={{ opacity: 0, x: -50 }}
+        <div className="w-full space-y-8 flex flex-col items-center">
+          <motion.div
+            initial={{ opacity: 0, x: -40 }}
             animate={{ opacity: 1, x: 0 }}
-            className="bg-white/60 dark:bg-black/60 backdrop-blur-xl border border-purple-500/20 dark:border-[#00FF41]/20 p-12 rounded-3xl shadow-[0_0_40px_rgba(147,51,234,0.1)] dark:shadow-[0_0_40px_rgba(0,255,65,0.1)] flex flex-col items-center gap-8 w-full max-w-md transition-colors duration-500"
+            className="flex flex-col items-center gap-6 w-full"
           >
-            <h2 className="text-2xl font-bold tracking-widest text-purple-600 dark:text-[#00FF41] uppercase flex items-center gap-3">
-              <span className="w-2 h-2 rounded-full bg-purple-600 dark:bg-[#00FF41] animate-pulse"></span>
+            <h2 className="text-xs font-bold tracking-[0.3em] text-purple-600 dark:text-[#00FF41] uppercase flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-purple-600 dark:bg-[#00FF41] animate-pulse" />
               {t('lobbyActive')}
             </h2>
-            <div className="bg-white p-6 rounded-3xl">
-              <QRCodeSVG 
-                value={joinUrl} 
-                size={260} 
+
+            {/* QR card */}
+            <div className="bg-white p-5 rounded-2xl shadow-xl dark:shadow-[0_0_40px_rgba(0,255,65,0.15)] transition-shadow">
+              <QRCodeSVG
+                value={joinUrl}
+                size={200}
                 bgColor="#ffffff"
                 fgColor="#000000"
                 level="Q"
               />
             </div>
-            <div className="text-center space-y-2">
-              <p className="text-gray-600 dark:text-gray-400 font-medium transition-colors">{t('joinSecurely')}</p>
-              <p className="text-6xl font-black text-gray-900 dark:text-white tracking-[0.2em] transition-colors">{roomId}</p>
+
+            <div className="text-center">
+              <p className="text-gray-500 dark:text-gray-400 text-xs mb-1 uppercase tracking-widest">{t('joinSecurely')}</p>
+              <p className="text-4xl font-black tracking-[0.25em] text-gray-900 dark:text-white">{roomId}</p>
             </div>
           </motion.div>
-          
-          {/* Host Controls */}
-          <motion.div 
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="mt-12 flex gap-4 w-full max-w-md"
-          >
+
+          {/* View Switcher */}
+          <div className="flex bg-gray-100 dark:bg-white/5 p-1 rounded-xl w-full">
             <button 
-              onClick={handleStart}
-              disabled={isStarting || status === 'matched'}
-              className="flex-1 py-4 bg-purple-600 dark:bg-[#00FF41] text-white dark:text-black font-bold text-lg rounded-2xl hover:bg-purple-700 dark:hover:bg-white hover:text-white dark:hover:text-black transition-all shadow-[0_0_20px_rgba(147,51,234,0.3)] dark:shadow-[0_0_20px_rgba(0,255,65,0.3)] disabled:opacity-50 flex justify-center items-center"
+              onClick={() => setViewMode('graph')}
+              className={`flex-1 py-2 px-4 rounded-lg text-sm font-bold transition-all ${viewMode === 'graph' ? 'bg-white dark:bg-[#00FF41] text-purple-600 dark:text-black shadow-sm' : 'text-gray-500'}`}
             >
-              {isStarting ? <Loader2 className="w-6 h-6 animate-spin" /> : t('startSession')}
+              Network
             </button>
             <button 
+              onClick={() => setViewMode('list')}
+              className={`flex-1 py-2 px-4 rounded-lg text-sm font-bold transition-all ${viewMode === 'list' ? 'bg-white dark:bg-[#00FF41] text-purple-600 dark:text-black shadow-sm' : 'text-gray-500'}`}
+            >
+              Participants
+            </button>
+          </div>
+
+          {/* Participant count */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+            className="text-center"
+          >
+            <span className="text-5xl font-black text-purple-600 dark:text-[#00FF41]">{participants.length}</span>
+            <span className="text-sm font-bold text-gray-500 dark:text-gray-400 ml-3 uppercase tracking-tighter">{t('connected')}</span>
+          </motion.div>
+        </div>
+
+        {/* Global Controls & Host controls */}
+        <div className="w-full space-y-6">
+           {/* Top-right controls */}
+          <div className="flex items-center justify-center gap-4">
+            <LanguageSwitcher />
+            <ThemeToggle />
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="flex flex-col gap-3 w-full"
+          >
+            <button
+              onClick={handleStart}
+              disabled={isStarting || status === 'matched'}
+              className="w-full py-4 bg-purple-600 dark:bg-[#00FF41] text-white dark:text-black font-bold text-base rounded-2xl hover:bg-purple-700 dark:hover:bg-white transition-all shadow-lg dark:shadow-[0_0_20px_rgba(0,255,65,0.2)] disabled:opacity-50 flex items-center justify-center"
+            >
+              {isStarting ? <Loader2 className="w-5 h-5 animate-spin" /> : t('startSession')}
+            </button>
+            <button
               onClick={handleClose}
               disabled={isClosing}
-              className="px-8 py-4 bg-transparent border-2 border-red-500/50 text-red-500 font-bold text-lg rounded-2xl hover:bg-red-500 hover:text-white hover:border-red-500 transition-all disabled:opacity-50"
+              className="w-full py-3 bg-transparent border border-red-500/30 text-red-500 font-semibold text-sm rounded-2xl hover:bg-red-500 hover:text-white transition-all disabled:opacity-50"
             >
               {t('killSwitch')}
             </button>
           </motion.div>
-
         </div>
-
-        {/* Right Section: Real-time Tracker */}
-        <div className="flex-1 flex flex-col justify-center pt-12 lg:mr-12">
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="mb-10 text-center lg:text-left"
-          >
-            <h3 className="text-7xl font-black mb-4 tracking-tighter transition-colors">
-              <span className="text-purple-600 dark:text-[#00FF41] transition-colors">{participants.length}</span> {t('connected')}
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400 text-2xl font-light transition-colors">{t('networkReady')}</p>
-          </motion.div>
-
-          {/* Participant Grid */}
-          <div className="flex-1 max-h-[60vh] overflow-y-auto pr-4 custom-scrollbar">
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              <AnimatePresence>
-                {participants.map((p) => (
-                  <motion.div
-                    key={p.id}
-                    initial={{ opacity: 0, scale: 0, y: 20 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.8 }}
-                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                    className="bg-white/60 dark:bg-gray-900/50 backdrop-blur-md border border-gray-200 dark:border-gray-800 py-5 px-6 rounded-2xl flex items-center gap-4 hover:border-purple-500/50 dark:hover:border-[#00FF41]/50 transition-colors"
-                  >
-                     <div className="w-3 h-3 rounded-full bg-purple-500 dark:bg-[#00FF41] shadow-[0_0_10px_purple] dark:shadow-[0_0_10px_#00FF41] animate-pulse"></div>
-                     <span className="font-semibold text-lg text-gray-800 dark:text-gray-200 truncate">{p.username || t('anonymous')}</span>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            </div>
-            {participants.length === 0 && (
-              <div className="h-48 flex flex-col items-center justify-center text-gray-400 dark:text-gray-500/50 italic border-2 border-dashed border-gray-300 dark:border-gray-800/50 rounded-3xl mt-4 transition-colors">
-                <p className="text-xl">{t('awaitingConnections')}</p>
-              </div>
-            )}
-          </div>
-        </div>
-
       </div>
-      
+
+      {/* ── Right panel: Dynamic Content ───────────────────────────────── */}
+      <div className="relative flex-1 overflow-hidden">
+        <AnimatePresence mode="wait">
+          {viewMode === 'graph' ? (
+            <motion.div
+              key="graph"
+              initial={{ x: 300, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: -300, opacity: 0 }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="absolute inset-0"
+            >
+              <NexusMapCanvas
+                nodes={[...participants.map(p => ({ uid: p.id, traitVector: p.traitVector })), ...demoNodes]}
+                initialNodeCount={60}
+                theme={theme}
+              />
+
+              {/* Floating labels / buttons for graph mode */}
+              <div className="absolute top-8 left-1/2 -translate-x-1/2 pointer-events-none select-none text-center">
+                <p className="text-xs tracking-[0.4em] text-purple-600/40 dark:text-white/30 uppercase font-black">Soul Resonance Map</p>
+              </div>
+
+              <button
+                onClick={addDemoNode}
+                className="absolute bottom-8 right-8 flex items-center gap-2 px-6 py-3 rounded-full text-xs font-bold tracking-widest transition-all bg-white/10 dark:bg-white/5 border border-purple-500/20 dark:border-white/10 text-purple-600/60 dark:text-white/40 hover:bg-white/20 dark:hover:bg-white/10 hover:text-purple-600 dark:hover:text-white shadow-xl backdrop-blur-md"
+              >
+                <span className="text-lg">＋</span>
+                NEW NODE
+              </button>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="list"
+              initial={{ x: 300, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: -300, opacity: 0 }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="absolute inset-0 p-16 overflow-y-auto custom-scrollbar"
+            >
+              <div className="max-w-4xl mx-auto space-y-12">
+                <div className="text-center lg:text-left">
+                  <h3 className="text-6xl font-black mb-4 tracking-tighter">
+                    <span className="text-purple-600 dark:text-[#00FF41]">{participants.length}</span> {t('connected')}
+                  </h3>
+                  <p className="text-gray-500 dark:text-gray-400 text-xl font-light">{t('networkReady')}</p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <AnimatePresence>
+                    {participants.map((p) => (
+                      <motion.div
+                        key={p.id}
+                        initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.8 }}
+                        className="bg-white/40 dark:bg-gray-900/40 backdrop-blur-xl border border-gray-200 dark:border-white/5 py-6 px-8 rounded-3xl flex items-center gap-5 hover:border-purple-500/50 dark:hover:border-[#00FF41]/50 transition-all group"
+                      >
+                         <div className="w-4 h-4 rounded-full bg-purple-500 dark:bg-[#00FF41] shadow-[0_0_15px_rgba(147,51,234,0.5)] dark:shadow-[0_0_15px_rgba(0,255,65,0.5)] animate-pulse" />
+                         <span className="font-bold text-xl text-gray-800 dark:text-gray-100 truncate">{p.username || t('anonymous')}</span>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                </div>
+
+                {participants.length === 0 && (
+                  <div className="h-64 flex flex-col items-center justify-center text-gray-400 dark:text-gray-600 italic border-4 border-dashed border-gray-100 dark:border-white/5 rounded-[40px] transition-colors">
+                    <p className="text-2xl font-light">{t('awaitingConnections')}</p>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
       <style jsx global>{`
         .custom-scrollbar::-webkit-scrollbar {
-          width: 6px;
+          width: 8px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
           background: transparent;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-          background-color: rgba(255, 255, 255, 0.1);
-          border-radius: 10px;
+          background-color: ${theme === 'light' ? 'rgba(139, 92, 246, 0.2)' : 'rgba(255, 255, 255, 0.1)'};
+          border-radius: 20px;
         }
       `}</style>
     </div>

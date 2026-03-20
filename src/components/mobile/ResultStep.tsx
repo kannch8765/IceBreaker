@@ -13,12 +13,6 @@ export function ResultStep() {
   // This prevents the listener from unmounting during the transition before all data is sync'd.
   useParticipant();
   
-  // Debugging logs requested by the user
-  React.useEffect(() => {
-    console.log("matchedParticipant:", matchedParticipant);
-    console.log("aiTopics:", matchedParticipant?.aiTopics);
-  }, [matchedParticipant]);
-
   // Helper to safely encode URLs that might contain raw Japanese characters in the seed
   const getSafeAvatarUrl = (url: string | null) => {
     if (!url) return null;

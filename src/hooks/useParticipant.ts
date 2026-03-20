@@ -6,11 +6,11 @@ import { db } from '../lib/firebase';
 import { useOnboardingStore, OnboardingContext } from '../context/OnboardingContext';
 import { useTranslation } from '../context/LanguageContext';
 
-export function useParticipant(explicitRoomId?: string) {
+export function useParticipant() {
   const context = useContext(OnboardingContext);
   
-  // Use context if available, otherwise fallback to explicit or empty values
-  const roomId = explicitRoomId || context?.roomId || null;
+  // Use context if available
+  const roomId = context?.roomId || null;
   const participantId = context?.participantId || null;
   const setParticipantId = context?.setParticipantId || (() => {});
   const setAiTopics = context?.setAiTopics || (() => {});
@@ -32,7 +32,7 @@ export function useParticipant(explicitRoomId?: string) {
   const [error, setError] = useState<string | null>(null);
   const [isTakingLong, setIsTakingLong] = useState(false);
 
-  const createParticipant = useCallback(async (overrideData?: any, options?: { skipStore?: boolean }) => {
+  const createParticipant = useCallback(async (overrideData?: any) => {
     if (!roomId) {
       setError("No room ID found in URL");
       return null;
@@ -46,7 +46,7 @@ export function useParticipant(explicitRoomId?: string) {
     try {
       const participantsRef = collection(db, 'rooms', roomId, 'participants');
 
-      if (participantId && !options?.skipStore) {
+      if (participantId) {
         try {
           const existingRef = doc(participantsRef, participantId);
           const payload = {
@@ -86,8 +86,7 @@ export function useParticipant(explicitRoomId?: string) {
         // Strictly enforce mode-specific data
         mood: mergedData.inputMode === 'mood' ? mergedData.mood : '',
         imageUrl: mergedData.inputMode === 'camera' ? (mergedData.imageUrl || null) : null,
-        language: mergedData.language || language,
-        isSeed: mergedData.isSeed || false,
+        language: language,
         status: 'generating_questions', // Trigger backend personalized questions
         createdAt: serverTimestamp(),
         expiresAt: expiresAt,
@@ -95,9 +94,7 @@ export function useParticipant(explicitRoomId?: string) {
 
       await setDoc(newParticipantRef, payload);
 
-      if (!options?.skipStore) {
-        setParticipantId(newId);
-      }
+      setParticipantId(newId);
       setLoading(false);
       return newId;
     } catch (err: any) {
@@ -141,7 +138,6 @@ export function useParticipant(explicitRoomId?: string) {
         if (data.aiTopics) setAiTopics(data.aiTopics);
         if (data.avatarUrl) setAvatarUrl(data.avatarUrl);
         if (data.matchedParticipant) {
-          console.log("Firestore sync matchedParticipant:", data.matchedParticipant);
           setMatchedParticipant(data.matchedParticipant);
         }
 

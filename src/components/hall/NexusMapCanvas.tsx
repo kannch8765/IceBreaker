@@ -75,19 +75,20 @@ function hexToRGB(hex: string): [number, number, number] {
   ];
 }
 
+import { useTheme } from '@/hooks/useTheme';
+
 // ── Profile card (pure React overlay) ────────────────────────────────────────
 
 function ProfileCard({
   info,
   cardRef,
   onClose,
-  theme = 'dark',
 }: {
   info: SelectedInfo;
   cardRef: React.RefObject<HTMLDivElement | null>;
   onClose: () => void;
-  theme?: 'light' | 'dark';
 }) {
+  const { theme } = useTheme();
   const [r, g, b] = traitRGB(info.tv);
   const col = `rgb(${r},${g},${b})`;
   const colA = (a: number) => `rgba(${r},${g},${b},${a})`;
@@ -173,12 +174,36 @@ function ProfileCard({
 export default function NexusMapCanvas({
   nodes,
   initialNodeCount = 0,
-  theme = 'dark',
 }: {
   nodes: StarNodeInput[];
   initialNodeCount?: number;
-  theme?: 'light' | 'dark';
 }) {
+  const { theme } = useTheme();
+  
+  // Dynamic color fetch from CSS variables
+  const [colors, setColors] = useState({ 
+    bg: '#0A0E14', 
+    accent: '#00FF41', 
+    accent2: '#4ade80' 
+  });
+
+  useEffect(() => {
+    // Small delay to ensure CSS classes are applied and computed
+    const updateColors = () => {
+      const root = document.documentElement;
+      const style = getComputedStyle(root);
+      setColors({
+        bg: style.getPropertyValue('--background').trim() || (theme === 'light' ? '#F5F3FF' : '#0A0E14'),
+        accent: style.getPropertyValue('--accent-primary').trim() || (theme === 'light' ? '#7c3aed' : '#00FF41'),
+        accent2: style.getPropertyValue('--accent-secondary').trim() || (theme === 'light' ? '#6366f1' : '#4ade80'),
+      });
+    };
+    
+    updateColors();
+    // Re-check after transition time just in case
+    const timer = setTimeout(updateColors, 510);
+    return () => clearTimeout(timer);
+  }, [theme]);
   const canvasRef   = useRef<HTMLCanvasElement>(null);
   const cardRef     = useRef<HTMLDivElement>(null);   // direct DOM update each frame
   const physRef     = useRef<PhysNode[]>([]);
@@ -330,12 +355,13 @@ export default function NexusMapCanvas({
       }
 
       // Render
-      const isLight = theme === 'light';
       ctx.clearRect(0, 0, W, H);
-      ctx.fillStyle = isLight ? '#F5F3FF' : '#0A0E14'; // Lilac background for light mode
+      ctx.fillStyle = colors.bg;
       ctx.fillRect(0, 0, W, H);
 
       // Nebula wisps
+      // If light mode, use soft purple/indigo. If dark, use deep blue/purple.
+      const isLight = theme === 'light';
       const nebulaCols = isLight 
         ? [
           [0.20, 0.30, 200, '#C4B5FD', 0.12], // Soft Purple
@@ -459,7 +485,6 @@ export default function NexusMapCanvas({
           info={selected}
           cardRef={cardRef}
           onClose={handleClose}
-          theme={theme}
         />
       )}
     </div>

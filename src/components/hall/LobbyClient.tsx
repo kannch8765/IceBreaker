@@ -13,7 +13,6 @@ import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher';
 import { useSearchParams } from 'next/navigation';
 import { ResultPage } from './ResultPage';
 import { useTheme } from '@/hooks/useTheme';
-import { ThemeToggle } from '@/components/ui/ThemeToggle';
 
 export type SessionState = 'waiting' | 'matched' | 'closed';
 
@@ -155,7 +154,6 @@ export default function LobbyClient() {
            {/* Top-right controls */}
           <div className="flex items-center justify-center gap-4">
             <LanguageSwitcher />
-            <ThemeToggle />
           </div>
 
           <motion.div
@@ -197,7 +195,6 @@ export default function LobbyClient() {
               <NexusMapCanvas
                 nodes={[...participants.map(p => ({ uid: p.id, traitVector: p.traitVector })), ...demoNodes]}
                 initialNodeCount={60}
-                theme={theme}
               />
 
               {/* Floating labels / buttons for graph mode */}

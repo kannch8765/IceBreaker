@@ -13,6 +13,8 @@ type FormData = {
   inputMode: 'mood' | 'camera';
   imageUrl?: string;
   answers: Record<string, string>; // questionId -> answer
+  swipeAnswers: number[];           // 10 swipe choices (0=left, 1=right)
+  traitVector: number[];            // 5-dim soul vector computed from swipeAnswers
 };
 
 type OnboardingContextType = {
@@ -64,6 +66,8 @@ export function OnboardingProvider({ children, initialRoomId }: { children: Reac
     mood: '',
     inputMode: 'mood',
     answers: {},
+    swipeAnswers: [],
+    traitVector: [],
   });
   const { language, setLanguage, t } = useTranslation();
   const [theme, setTheme] = useState<Theme>('light');
@@ -81,13 +85,21 @@ export function OnboardingProvider({ children, initialRoomId }: { children: Reac
     const savedRoomId = localStorage.getItem('roomId');
     const savedLanguage = localStorage.getItem('preferredLanguage');
 
-    if (savedParticipantId) setParticipantId(savedParticipantId);
+    const currentRoomId = initialRoomId || searchParams.get('room');
+    const isSameRoom = savedRoomId && currentRoomId && savedRoomId === currentRoomId;
 
-    // Force LanguageStep if they haven't picked a language, otherwise restore step
+    // Only restore participantId if it's the same room
+    if (isSameRoom && savedParticipantId) setParticipantId(savedParticipantId);
+
     if (!savedLanguage) {
+      // No language chosen yet — always start from step 1
       setStep(1);
-    } else if (savedStep) {
+    } else if (isSameRoom && savedStep) {
+      // Same room — restore progress
       setStep(parseInt(savedStep, 10));
+    } else {
+      // Different room — language already set, skip to identity step
+      setStep(2);
     }
 
     // Only restore roomId if not provided via props

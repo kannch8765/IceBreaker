@@ -124,13 +124,15 @@ export function ResultStep() {
             <h3 className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-2">
               <MessageCircle size={14} /> {t('aiIceBreakers')}
             </h3>
-            {aiTopics.length > 0 ? aiTopics.map((topic, i) => (
-              <div key={i} className="p-4 rounded-2xl bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800/30 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
-                <p className="text-sm text-indigo-900 dark:text-indigo-200 font-medium leading-relaxed">
-                  {typeof topic === 'string' ? topic : ((topic as any)[language] || (topic as any).en || '')}
-                </p>
-              </div>
-            )) : (
+            {matchedParticipant?.aiTopics && matchedParticipant.aiTopics.length > 0 ? (
+              matchedParticipant.aiTopics.map((topic: string, i: number) => (
+                <div key={i} className="p-4 rounded-2xl bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800/30 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
+                  <p className="text-sm text-indigo-900 dark:text-indigo-200 font-medium leading-relaxed">
+                    {topic}
+                  </p>
+                </div>
+              ))
+            ) : (
               <p className="text-xs text-gray-400 italic">{t('noTopicsGenerated')}</p>
             )}
           </div>

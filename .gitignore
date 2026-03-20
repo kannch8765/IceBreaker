@@ -32,3 +32,5 @@ Thumbs.db
 
 # ignore src/_sandbox
 src/_sandbox/
+
+*.py

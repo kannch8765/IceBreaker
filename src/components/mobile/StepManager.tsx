@@ -6,6 +6,7 @@ import { IdentityStep } from './IdentityStep';
 import { MoodStep } from './MoodStep';
 import { QuestionsStep } from './QuestionsStep';
 import { ProcessingStep } from './ProcessingStep';
+import { SessionWaitingPage } from './SessionWaitingPage';
 import { ResultStep } from './ResultStep';
 import { NavBar } from './NavBar';
 import { AnimatePresence } from 'framer-motion';
@@ -27,7 +28,8 @@ export function StepManager() {
         {step === 3 && <MoodStep key="step2" />}
         {step === 4 && <QuestionsStep key="step3" />}
         {step === 5 && <ProcessingStep key="step4" />}
-        {step === 6 && <ResultStep key="step5" />}
+        {step === 6 && <SessionWaitingPage key="stepWait" />}
+        {step === 7 && <ResultStep key="step5" />}
       </AnimatePresence>
     </div>
   );

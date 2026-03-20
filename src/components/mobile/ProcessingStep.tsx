@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useOnboardingStore } from '@/context/OnboardingContext';
 import { StepWrapper } from '@/components/motion/StepWrapper';
 import { motion } from 'framer-motion';
@@ -12,9 +12,11 @@ export function ProcessingStep() {
   const { nextStep, t, language } = useOnboardingStore();
   const { isTakingLong } = useParticipant();
   const { uiState, retryAi, isRetrying } = useParticipantStatus();
+  const hasTransitioned = useRef(false);
 
   useEffect(() => {
-    if (uiState === 'profile_ready') {
+    if (!hasTransitioned.current && (uiState === 'waiting_for_session' || uiState === 'profile_ready')) {
+      hasTransitioned.current = true;
       nextStep();
     }
   }, [uiState, nextStep]);

@@ -28,4 +28,7 @@ yarn-error.log*
 
 # OS Files
 .DS_Store
-Thumbs.db
+Thumbs.db
+
+# ignore src/_sandbox
+src/_sandbox/

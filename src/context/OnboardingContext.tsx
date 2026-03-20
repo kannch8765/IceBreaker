@@ -38,8 +38,8 @@ type OnboardingContextType = {
   setAvatarUrl: (url: string | null) => void;
   status: string | null;
   setStatus: (status: string | null) => void;
-  matchedParticipants: any[];
-  setMatchedParticipants: (matches: any[]) => void;
+  matchedParticipant: any | null;
+  setMatchedParticipant: (match: any | null) => void;
 };
 
 const OnboardingContext = createContext<OnboardingContextType | undefined>(undefined);
@@ -47,7 +47,7 @@ const OnboardingContext = createContext<OnboardingContextType | undefined>(undef
 export function OnboardingProvider({ children, initialRoomId }: { children: React.ReactNode, initialRoomId?: string }) {
   const searchParams = useSearchParams();
   const [roomId, setRoomId] = useState<string | null>(initialRoomId || null);
-  
+
   useEffect(() => {
     if (initialRoomId) {
       setRoomId(initialRoomId);
@@ -72,7 +72,7 @@ export function OnboardingProvider({ children, initialRoomId }: { children: Reac
   const [status, setStatus] = useState<string | null>(null);
   const [aiTopics, setAiTopics] = useState<string[]>([]);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
-  const [matchedParticipants, setMatchedParticipants] = useState<any[]>([]);
+  const [matchedParticipant, setMatchedParticipant] = useState<any | null>(null);
 
   // Persistence: Load from localStorage on mount
   useEffect(() => {
@@ -82,7 +82,7 @@ export function OnboardingProvider({ children, initialRoomId }: { children: Reac
     const savedLanguage = localStorage.getItem('preferredLanguage');
 
     if (savedParticipantId) setParticipantId(savedParticipantId);
-    
+
     // Force LanguageStep if they haven't picked a language, otherwise restore step
     if (!savedLanguage) {
       setStep(1);
@@ -124,8 +124,8 @@ export function OnboardingProvider({ children, initialRoomId }: { children: Reac
   }, []);
 
   return (
-    <OnboardingContext.Provider value={{ 
-      step, setStep, nextStep, prevStep, 
+    <OnboardingContext.Provider value={{
+      step, setStep, nextStep, prevStep,
       formData, updateFormData,
       language, setLanguage,
       theme, setTheme,
@@ -136,7 +136,7 @@ export function OnboardingProvider({ children, initialRoomId }: { children: Reac
       aiTopics, setAiTopics,
       avatarUrl, setAvatarUrl,
       status, setStatus,
-      matchedParticipants, setMatchedParticipants
+      matchedParticipant, setMatchedParticipant
     }}>
       {children}
     </OnboardingContext.Provider>

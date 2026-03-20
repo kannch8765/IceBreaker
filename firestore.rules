@@ -9,7 +9,7 @@ service cloud.firestore {
       allow create: if request.resource.data.status == 'waiting';
       
       // Host can start/close session
-      allow update: if request.resource.data.status in ['active', 'closed'];
+      allow update: if request.resource.data.status in ['active', 'matched', 'closed'];
       
       // Participants sub-collection
       match /participants/{participantId} {

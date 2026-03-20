@@ -24,6 +24,8 @@ export const TRANSLATIONS = {
     anyPronouns: "Any Pronouns",
     vibe: "Vibe",
     aiIceBreakers: "AI Ice Breakers",
+    resultTitle: "Your new friend is here 👀",
+    resultSubtitle: "Check your screen",
     addToWallet: "Add to Wallet",
     peopleMeet: "People you should meet:",
     appTitle: "Nexus Connect",
@@ -73,6 +75,8 @@ export const TRANSLATIONS = {
     anonymous: "Anonymous",
     mysterious: "Mysterious",
     noTopicsGenerated: "No topics generated.",
+    waitingSessionTitle: "Get ready 👀",
+    waitingSessionSubtitle: "Waiting for the session to start",
   },
   jp: {
     whoAreYou: "名前を入力",
@@ -97,6 +101,8 @@ export const TRANSLATIONS = {
     anyPronouns: "どの代名詞でもOK",
     vibe: "雰囲気",
     aiIceBreakers: "AIトークテーマ",
+    resultTitle: "新しい友達が見つかりました 👀",
+    resultSubtitle: "あなたの画面を確認してください",
     addToWallet: "ウォレットに追加",
     peopleMeet: "おすすめの人",
     appTitle: "Nexus",
@@ -146,6 +152,8 @@ export const TRANSLATIONS = {
     anonymous: "匿名",
     mysterious: "ミステリアス",
     noTopicsGenerated: "トピックが生成されませんでした。",
+    waitingSessionTitle: "準備はいいですか 👀",
+    waitingSessionSubtitle: "セッションの開始を待っています",
   },
   cn: {
     whoAreYou: "输入你的名字",
@@ -170,6 +178,8 @@ export const TRANSLATIONS = {
     anyPronouns: "任意代词",
     vibe: "氛围",
     aiIceBreakers: "AI破冰话题",
+    resultTitle: "你的新朋友出现了 👀",
+    resultSubtitle: "看看你的屏幕吧",
     addToWallet: "加入钱包",
     peopleMeet: "你可能想认识的人",
     appTitle: "Nexus",
@@ -219,6 +229,8 @@ export const TRANSLATIONS = {
     anonymous: "匿名",
     mysterious: "神秘",
     noTopicsGenerated: "未生成任何话题。",
+    waitingSessionTitle: "准备好了吗 👀",
+    waitingSessionSubtitle: "等待主持人开始",
   },
 };
 

@@ -15,7 +15,7 @@ export function useParticipant() {
     setAvatarUrl,
     setQuestions,
     setStatus,
-    setMatchedParticipants,
+    setMatchedParticipant,
     formData
   } = useOnboardingStore();
   
@@ -130,7 +130,9 @@ export function useParticipant() {
         if (data.questions) setQuestions(data.questions);
         if (data.aiTopics) setAiTopics(data.aiTopics);
         if (data.avatarUrl) setAvatarUrl(data.avatarUrl);
-        if (data.matchedParticipants) setMatchedParticipants(data.matchedParticipants);
+        if (data.matchedParticipant) {
+          setMatchedParticipant(data.matchedParticipant);
+        }
 
         if (data.status === 'ready' || data.status === 'answering' || data.status === 'error') {
           clearTimeout(hintTimeoutId);
@@ -159,10 +161,13 @@ export function useParticipant() {
   return { createParticipant, updateParticipant, loading, error, isTakingLong };
 }
 
-export type UIState = "loading_questions" | "answering_form" | "loading_profile" | "profile_ready" | "error";
+export type UIState = "loading_questions" | "answering_form" | "loading_profile" | "waiting_for_session" | "profile_ready" | "error";
+
+import { useRoomState } from './useRoomParticipants';
 
 export function useParticipantStatus() {
   const { status, questions, roomId, participantId } = useOnboardingStore();
+  const { status: roomStatus } = useRoomState(roomId || '');
   const [isRetrying, setIsRetrying] = useState(false);
 
   let uiState: UIState = "loading_questions"; // default safe state
@@ -170,7 +175,11 @@ export function useParticipantStatus() {
   if (status === 'error') {
     uiState = "error";
   } else if (status === 'ready') {
-    uiState = "profile_ready";
+    if (roomStatus === 'waiting') {
+      uiState = "waiting_for_session";
+    } else {
+      uiState = "profile_ready";
+    }
   } else if (status === 'waiting_for_ai' || status === 'processing_ai') {
     uiState = "loading_profile";
   } else if (status === 'answering' && questions.length > 0) {

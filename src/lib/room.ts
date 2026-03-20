@@ -135,5 +135,5 @@ export async function closeRoom(roomId: string): Promise<void> {
 
 export async function startRoomSession(roomId: string): Promise<void> {
   const roomRef = doc(db, "rooms", roomId);
-  await updateDoc(roomRef, { status: "active" });
+  await updateDoc(roomRef, { status: "matched" });
 }

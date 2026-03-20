@@ -12,8 +12,10 @@ import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation } from '@/context/LanguageContext';
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher';
-
 import { useSearchParams } from 'next/navigation';
+import { ResultPage } from './ResultPage';
+
+export type SessionState = 'waiting' | 'matched' | 'closed';
 
 export default function LobbyClient() {
   const searchParams = useSearchParams();
@@ -25,6 +27,7 @@ export default function LobbyClient() {
   const { participants, loading } = useRoomParticipants(roomId);
   const { status } = useRoomState(roomId);
   const [isClosing, setIsClosing] = useState(false);
+  const [isStarting, setIsStarting] = useState(false);
 
   useEffect(() => {
     if (status === 'closed') {
@@ -42,10 +45,13 @@ export default function LobbyClient() {
   const joinUrl = `${origin}/room?room=${roomId}`;
 
   const handleStart = async () => {
+    if (status === 'matched') return;
+    setIsStarting(true);
     try {
       await startRoomSession(roomId);
     } catch (err) {
       console.error(err);
+      setIsStarting(false);
     }
   };
 
@@ -65,6 +71,10 @@ export default function LobbyClient() {
         <Loader2 className="w-12 h-12 text-[#00FF41] animate-spin" />
       </div>
     );
+  }
+
+  if (status === 'matched') {
+    return <ResultPage />;
   }
 
   return (
@@ -113,9 +123,10 @@ export default function LobbyClient() {
           >
             <button 
               onClick={handleStart}
-              className="flex-1 py-4 bg-purple-600 dark:bg-[#00FF41] text-white dark:text-black font-bold text-lg rounded-2xl hover:bg-purple-700 dark:hover:bg-white hover:text-white dark:hover:text-black transition-all shadow-[0_0_20px_rgba(147,51,234,0.3)] dark:shadow-[0_0_20px_rgba(0,255,65,0.3)]"
+              disabled={isStarting || status === 'matched'}
+              className="flex-1 py-4 bg-purple-600 dark:bg-[#00FF41] text-white dark:text-black font-bold text-lg rounded-2xl hover:bg-purple-700 dark:hover:bg-white hover:text-white dark:hover:text-black transition-all shadow-[0_0_20px_rgba(147,51,234,0.3)] dark:shadow-[0_0_20px_rgba(0,255,65,0.3)] disabled:opacity-50 flex justify-center items-center"
             >
-              {t('startSession')}
+              {isStarting ? <Loader2 className="w-6 h-6 animate-spin" /> : t('startSession')}
             </button>
             <button 
               onClick={handleClose}

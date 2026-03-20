@@ -60,7 +60,7 @@ export function MoodStep() {
   };
 
   const handleMoodSelect = (moodItem: { emoji: string; label: string }) => {
-    updateFormData({ mood: moodItem.label, inputMode: 'mood' });
+    updateFormData({ mood: moodItem.label, inputMode: 'mood', imageUrl: undefined });
   };
 
   // Camera logic
@@ -146,7 +146,7 @@ export function MoodStep() {
       updateFormData({ inputMode: 'camera', imageUrl: url, mood: "" });
       
       console.log("STEP 5: createParticipant start...");
-      const id = await createParticipant();
+      const id = await createParticipant({ inputMode: 'camera', imageUrl: url, mood: "" });
       if (id) {
         console.log("STEP 6: createParticipant success", id);
         nextStep();
@@ -262,7 +262,7 @@ export function MoodStep() {
 
             <Button 
               onClick={async () => {
-                const id = await createParticipant();
+                const id = await createParticipant({ inputMode: 'mood', mood: formData.mood, imageUrl: null });
                 if (id) nextStep();
               }} 
               disabled={!formData.mood || isCreating} 

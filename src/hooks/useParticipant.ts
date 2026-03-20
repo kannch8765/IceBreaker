@@ -25,11 +25,13 @@ export function useParticipant() {
   const [error, setError] = useState<string | null>(null);
   const [isTakingLong, setIsTakingLong] = useState(false);
 
-  const createParticipant = useCallback(async () => {
+  const createParticipant = useCallback(async (overrideData?: any) => {
     if (!roomId) {
       setError("No room ID found in URL");
       return null;
     }
+
+    const mergedData = { ...formData, ...(overrideData || {}) };
 
     setLoading(true);
     setError(null);
@@ -40,15 +42,17 @@ export function useParticipant() {
       if (participantId) {
         try {
           const existingRef = doc(participantsRef, participantId);
-          await updateDoc(existingRef, {
-            username: formData.username,
-            pronoun: formData.pronoun,
-            mood: formData.mood,
-            inputMode: formData.inputMode,
-            ...(formData.imageUrl ? { imageUrl: formData.imageUrl } : {}),
+          const payload = {
+            username: mergedData.username,
+            pronoun: mergedData.pronoun,
+            inputMode: mergedData.inputMode,
+            // Strictly enforce mode-specific data
+            mood: mergedData.inputMode === 'mood' ? mergedData.mood : '',
+            imageUrl: mergedData.inputMode === 'camera' ? (mergedData.imageUrl || null) : null,
             language: language,
             status: 'generating_questions',
-          });
+          };
+          await updateDoc(existingRef, payload);
           setLoading(false);
           return participantId;
         } catch (updateErr: any) {
@@ -68,17 +72,20 @@ export function useParticipant() {
       const now = Timestamp.now();
       const expiresAt = Timestamp.fromMillis(now.toMillis() + 2 * 60 * 60 * 1000); // 2 hours
 
-      await setDoc(newParticipantRef, {
-        username: formData.username,
-        pronoun: formData.pronoun,
-        mood: formData.mood,
-        inputMode: formData.inputMode,
-        ...(formData.imageUrl ? { imageUrl: formData.imageUrl } : {}),
+      const payload = {
+        username: mergedData.username,
+        pronoun: mergedData.pronoun,
+        inputMode: mergedData.inputMode,
+        // Strictly enforce mode-specific data
+        mood: mergedData.inputMode === 'mood' ? mergedData.mood : '',
+        imageUrl: mergedData.inputMode === 'camera' ? (mergedData.imageUrl || null) : null,
         language: language,
         status: 'generating_questions', // Trigger backend personalized questions
         createdAt: serverTimestamp(),
         expiresAt: expiresAt,
-      });
+      };
+
+      await setDoc(newParticipantRef, payload);
 
       setParticipantId(newId);
       setLoading(false);

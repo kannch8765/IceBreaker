@@ -92,11 +92,11 @@ export function ResultStep() {
                   animate={{ scale: 1, opacity: 1 }}
                   className="w-14 h-14 rounded-full border-4 border-white dark:border-gray-800 flex justify-center items-center text-2xl z-[30] shadow-md overflow-hidden bg-white dark:bg-gray-900"
                 >
-                  {getSafeAvatarUrl(matchedParticipant?.participant?.avatarUrl || matchedParticipant?.avatarUrl) ? (
+                  {getSafeAvatarUrl(matchedParticipant?.avatarUrl) ? (
                     <div className="relative w-full h-full">
                       <img
-                        src={getSafeAvatarUrl(matchedParticipant?.participant?.avatarUrl || matchedParticipant?.avatarUrl)!}
-                        alt={matchedParticipant?.participant?.username || matchedParticipant?.username || 'User'}
+                        src={getSafeAvatarUrl(matchedParticipant?.avatarUrl)!}
+                        alt={matchedParticipant?.username || 'User'}
                         className="w-full h-full object-cover"
                         onError={(e) => {
                           e.currentTarget.style.display = 'none';

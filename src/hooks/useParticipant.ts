@@ -58,7 +58,10 @@ export function useParticipant() {
             imageUrl: mergedData.inputMode === 'camera' ? (mergedData.imageUrl || null) : null,
             language: language,
             status: 'generating_questions',
-            traitVector: mergedData.traitVector?.length ? mergedData.traitVector : null,
+            ocean_vector: mergedData.traitVector?.length 
+              ? mergedData.traitVector.map((v: number) => Math.round(v * 100)) 
+              : [50, 50, 50, 50, 50],
+            swipeAnswers: mergedData.swipeAnswers || [],
           };
           await updateDoc(existingRef, payload);
           setLoading(false);
@@ -89,7 +92,10 @@ export function useParticipant() {
         imageUrl: mergedData.inputMode === 'camera' ? (mergedData.imageUrl || null) : null,
         language: language,
         status: 'generating_questions', // Trigger backend personalized questions
-        traitVector: mergedData.traitVector?.length ? mergedData.traitVector : null,
+        ocean_vector: mergedData.traitVector?.length 
+          ? mergedData.traitVector.map((v: number) => Math.round(v * 100)) 
+          : [50, 50, 50, 50, 50],
+        swipeAnswers: mergedData.swipeAnswers || [],
         createdAt: serverTimestamp(),
         expiresAt: expiresAt,
       };
@@ -112,7 +118,15 @@ export function useParticipant() {
     setLoading(true);
     try {
       const participantRef = doc(db, 'rooms', roomId, 'participants', participantId);
-      await updateDoc(participantRef, data);
+      
+      // Transform ocean_vector if it exists in the incoming data
+      const finalData = { ...data };
+      if (data.traitVector) {
+        finalData.ocean_vector = data.traitVector.map((v: number) => Math.round(v * 100));
+        delete finalData.traitVector;
+      }
+      
+      await updateDoc(participantRef, finalData);
       setLoading(false);
     } catch (err: any) {
       console.error("Error updating participant:", err);

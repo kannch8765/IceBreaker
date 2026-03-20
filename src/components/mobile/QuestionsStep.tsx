@@ -9,7 +9,7 @@ import { useParticipant, useParticipantStatus } from '@/hooks/useParticipant';
 import { useTranslation } from '@/context/LanguageContext';
 
 export function QuestionsStep() {
-  const { formData, updateFormData, nextStep, prevStep, language, roomId, questions } = useOnboardingStore();
+  const { formData, updateFormData, nextStep, prevStep, language, roomId, participantId, questions } = useOnboardingStore();
   const { t } = useTranslation();
   const { updateParticipant, loading: isSubmitting, error, isTakingLong } = useParticipant();
   const { uiState, retryAi, isRetrying } = useParticipantStatus();
@@ -26,7 +26,10 @@ export function QuestionsStep() {
   const isComplete = questions.length > 0 && questions.every(q => formData.answers[q.id]?.trim());
 
   const handleSubmit = async () => {
-    if (!roomId) return;
+    if (!roomId || !participantId) {
+      console.error("[QuestionsStep] Missing roomId or participantId", { roomId, participantId });
+      return;
+    }
     
     // Construct the structured QA array
     const qa = questions.map(q => ({
@@ -35,12 +38,18 @@ export function QuestionsStep() {
       answer: formData.answers[q.id] || ''
     }));
 
-    await updateParticipant({
-      qa,
-      status: 'waiting_for_ai'
-    });
-    
-    nextStep();
+    console.log("[QuestionsStep] Submitting QA payload:", qa);
+
+    try {
+      await updateParticipant({
+        qa,
+        status: 'waiting_for_ai'
+      });
+      console.log("[QuestionsStep] Successfully updated participant with answers.");
+      nextStep();
+    } catch (err) {
+      console.error("[QuestionsStep] Failed to update participant:", err);
+    }
   };
 
   return (

@@ -6,26 +6,23 @@ import { db } from '../lib/firebase';
 import { useOnboardingStore, OnboardingContext } from '../context/OnboardingContext';
 import { useTranslation } from '../context/LanguageContext';
 
-export function useParticipant() {
+export function useParticipant(explicitRoomId?: string) {
   const context = useContext(OnboardingContext);
   
-  // Use context if available
-  const roomId = context?.roomId || null;
-  const participantId = context?.participantId || null;
-  const setParticipantId = context?.setParticipantId || (() => {});
-  const setAiTopics = context?.setAiTopics || (() => {});
-  const setAvatarUrl = context?.setAvatarUrl || (() => {});
-  const setQuestions = context?.setQuestions || (() => {});
-  const setStatus = context?.setStatus || (() => {});
-  const setMatchedParticipant = context?.setMatchedParticipant || (() => {});
-  const formData = context?.formData || { 
-    username: '', 
-    pronoun: '', 
-    mood: '', 
-    inputMode: 'mood', 
-    answers: {} 
-  };
+  // Safely extract from context
+  const { 
+    roomId: contextRoomId, 
+    participantId, 
+    setParticipantId,
+    setAiTopics,
+    setAvatarUrl,
+    setQuestions,
+    setStatus,
+    setMatchedParticipant,
+    formData
+  } = context || {};
   
+  const roomId = explicitRoomId || contextRoomId || null;
   const { language } = useTranslation();
 
   const [loading, setLoading] = useState(false);
@@ -38,7 +35,15 @@ export function useParticipant() {
       return null;
     }
 
-    const mergedData = { ...formData, ...(overrideData || {}) };
+    const currentForm = formData || { 
+      username: '', 
+      pronoun: '', 
+      mood: '', 
+      inputMode: 'mood', 
+      answers: {} 
+    };
+
+    const mergedData = { ...currentForm, ...(overrideData || {}) };
 
     setLoading(true);
     setError(null);
@@ -96,7 +101,9 @@ export function useParticipant() {
 
       await setDoc(newParticipantRef, payload);
 
-      setParticipantId(newId);
+      if (setParticipantId) {
+        setParticipantId(newId);
+      }
       setLoading(false);
       return newId;
     } catch (err: any) {
@@ -134,12 +141,13 @@ export function useParticipant() {
     const unsubscribe = onSnapshot(participantRef, (docSnap) => {
       if (docSnap.exists()) {
         const data = docSnap.data();
-        setStatus(data.status);
+        // These setters are from the OnboardingContext/Zustand store and are stable
+        if (setStatus) setStatus(data.status);
         
-        if (data.questions) setQuestions(data.questions);
-        if (data.aiTopics) setAiTopics(data.aiTopics);
-        if (data.avatarUrl) setAvatarUrl(data.avatarUrl);
-        if (data.matchedParticipant) {
+        if (data.questions && setQuestions) setQuestions(data.questions);
+        if (data.aiTopics && setAiTopics) setAiTopics(data.aiTopics);
+        if (data.avatarUrl && setAvatarUrl) setAvatarUrl(data.avatarUrl);
+        if (data.matchedParticipant && setMatchedParticipant) {
           setMatchedParticipant(data.matchedParticipant);
         }
 
@@ -165,7 +173,7 @@ export function useParticipant() {
       unsubscribe();
       clearTimeout(hintTimeoutId);
     };
-  }, [roomId, participantId, setAiTopics, setAvatarUrl, setQuestions, setStatus, setMatchedParticipant]);
+  }, [roomId, participantId]); // Removed setters from dependencies as they are stable from context/store
 
   return { createParticipant, updateParticipant, loading, error, isTakingLong };
 }

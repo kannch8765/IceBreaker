@@ -4,23 +4,14 @@ import { motion, useAnimation, AnimatePresence } from 'framer-motion';
 import { useOnboardingStore } from '@/context/OnboardingContext';
 import { calculateSoulVector } from '@/lib/utils';
 import { RotateCcw } from 'lucide-react';
+import { useTranslation } from '@/context/LanguageContext';
+import { TranslationKey } from '@/lib/translations';
 
 const TOTAL_ROUNDS = 10;
 const SWIPE_THRESHOLD = 45;
 
 // 10 questions — left = intuition/chaos, right = precision/order
-const QUESTIONS: { prompt: string; left: string; right: string }[] = [
-  { prompt: '面对未知，你更倾向于',  left: '跟随直觉',  right: '分析数据'  },
-  { prompt: '理想的周末是',          left: '随心而动',  right: '提前规划'  },
-  { prompt: '解决问题时，你习惯',    left: '发散联想',  right: '逐步推理'  },
-  { prompt: '你更享受',              left: '开放探索',  right: '精确掌控'  },
-  { prompt: '做决定时你看重',        left: '感受与共鸣', right: '逻辑与证据' },
-  { prompt: '你倾向于把想法',        left: '大胆分享',  right: '打磨后再说' },
-  { prompt: '创作时你偏好',          left: '即兴灵感',  right: '严密结构'  },
-  { prompt: '面对变化，你通常',      left: '欣然拥抱',  right: '深思熟虑'  },
-  { prompt: '你的思维方式更像',      left: '网状发散',  right: '线性推进'  },
-  { prompt: '你相信好的结果来自',    left: '内在感应',  right: '外在秩序'  },
-];
+// Questions are now dynamically accessed via translation keys in component.
 
 // 4-frame walk cycle — wider leg swing & more bob for "on-path" feel
 const WALK_FRAMES = [
@@ -813,6 +804,7 @@ function SceneSVG({ litSide, viewW, viewH, round }: {
 // ── Main step ────────────────────────────────────────────────────────────────
 export function SwipeStep() {
   const { nextStep, updateFormData } = useOnboardingStore();
+  const { t } = useTranslation();
 
   const [round, setRound]           = useState(0);
   const [animating, setAnimating]   = useState(false);
@@ -987,7 +979,7 @@ export function SwipeStep() {
             onTouchStart={e => e.stopPropagation()}
           >
             <RotateCcw size={12} />
-            <span>上一问</span>
+            <span>{t('prevQuestion')}</span>
           </motion.button>
         )}
       </AnimatePresence>
@@ -1006,7 +998,7 @@ export function SwipeStep() {
           {/* Prompt */}
           <p className="text-white/80 text-sm font-light tracking-widest text-center px-8"
             style={{ fontFamily: 'monospace', letterSpacing: '0.12em' }}>
-            {QUESTIONS[round].prompt}
+            {t(`swipeQ${round + 1}_prompt` as TranslationKey)}
           </p>
         </motion.div>
       </AnimatePresence>
@@ -1045,7 +1037,7 @@ export function SwipeStep() {
           animate={{ x: [-8, 8, -8] }}
           transition={{ repeat: Infinity, duration: 2.2, ease: 'easeInOut' }}
         >
-          <span className="text-white/50 text-sm font-light tracking-widest">← 滑动选择 →</span>
+          <span className="text-white/50 text-sm font-light tracking-widest">{t('swipeHint')}</span>
         </motion.div>
       )}
     </div>

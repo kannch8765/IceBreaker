@@ -1,0 +1,20 @@
+﻿diff --git a/src/hooks/useParticipant.ts b/src/hooks/useParticipant.ts
+index 3b44450..65bc32f 100644
+--- a/src/hooks/useParticipant.ts
++++ b/src/hooks/useParticipant.ts
+@@ -58,6 +58,7 @@ export function useParticipant() {
+             imageUrl: mergedData.inputMode === 'camera' ? (mergedData.imageUrl || null) : null,
+             language: language,
+             status: 'generating_questions',
++            traitVector: mergedData.traitVector?.length ? mergedData.traitVector : null,
+           };
+           await updateDoc(existingRef, payload);
+           setLoading(false);
+@@ -88,6 +89,7 @@ export function useParticipant() {
+         imageUrl: mergedData.inputMode === 'camera' ? (mergedData.imageUrl || null) : null,
+         language: language,
+         status: 'generating_questions', // Trigger backend personalized questions
++        traitVector: mergedData.traitVector?.length ? mergedData.traitVector : null,
+         createdAt: serverTimestamp(),
+         expiresAt: expiresAt,
+       };

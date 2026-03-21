@@ -73,7 +73,7 @@ IceBreaker/
 ## 🤖 Google Tech Usage 
 We integrated Google tech because of strictly enforced architectural constraints, not just for API calls.
 
-- **Vertex AI (Gemini 1.5 Flash)**: Essential for extracting structural data from unstructured user answers. We don't just ask for text; we demand strict JSON schema compliance to parse and route the 3 specific conversation topics back to the frontend without breaking the app.
+- **Vertex AI (3.0-flash-preview)**: Essential for extracting structural data from unstructured user answers. We don't just ask for text; we demand strict JSON schema compliance to parse and route the 3 specific conversation topics back to the frontend without breaking the app.
 - **Firebase Firestore**: We rely heavily on sub-collections and real-time listeners. Our 5-stage state machine (`generating_questions` → `answering` → `waiting_for_ai` → `ready`) is entirely Firestore-driven, allowing the React UI to be completely stateless and purely reactive.
 - **Google Cloud Run**: Using serverless containers ensures that computationally heavy AI generations do not block the real-time Event Hall view. This enables horizontal scaling if 500 people scan the QR code at the exact same moment.
 
@@ -176,7 +176,7 @@ IceBreaker/
 ## 🤖 Google Tech Usage 
 単なるAPI呼び出しではなく、アーキテクチャ上の必然性からGoogleの技術を深く統合しています。
 
-- **Vertex AI (Gemini 1.5 Flash)**：ユーザーの非定型な回答から構造化データを抽出するために不可欠です。単なるテキストではなく、厳密なJSONスキーマでの出力を要求し、アプリをクラッシュさせることなく3つの固有の話題をフロントエンドに確実に戻します。
+- **Vertex AI (3.0-flash-preview)**：ユーザーの非定型な回答から構造化データを抽出するために不可欠です。単なるテキストではなく、厳密なJSONスキーマでの出力を要求し、アプリをクラッシュさせることなく3つの固有の話題をフロントエンドに確実に戻します。
 - **Firebase Firestore**：サブコレクションとリアルタイムリスナーを極限まで活用。5段階のステートマシン（`generating_questions` → `answering` → `waiting_for_ai` → `ready`）は完全にFirestore駆動であり、React UIを完全にステートレスかつリアクティブに保ちます。
 - **Google Cloud Run**：サーバーレスコンテナを使用することで、重いAI生成処理がリアルタイムなEvent Hallビューをブロックしないようにしています。500人が同時にQRコードをスキャンしても、水平スケールで完璧に処理します。
 

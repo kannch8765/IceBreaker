@@ -3,13 +3,13 @@
 <div align="center">
 
 ### 🌐 Language
-🇬🇧 **English** | 🇯🇵 [日本語](#-日本語)
+EN **English** | 🇯🇵 [日本語](#-日本語)
 
 </div>
 
 ---
 
-# 🇬🇧 English
+# EN English
 
 ## 🌍 Brand New "Hello World."
 For decades, "Hello World" has been a developer's first interaction with a machine. In the AI era, we redefine it as the machine facilitating **a human's first interaction with another human**. 
@@ -88,12 +88,12 @@ Instead of uploading a selfie or picking a generic avatar, we use the obscure **
 
 ---
 
-# 🇯 ঐতি 日本語
+# JP 日本語
 
 <div align="center">
 
 ### 🌐 言語切替
-🇬🇧 [English](#-english) | 🇯🇵 **日本語**
+EN [English](#-english) | 🇯🇵 **日本語**
 
 </div>
 

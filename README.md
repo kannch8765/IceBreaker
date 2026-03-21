@@ -1,143 +1,324 @@
+<style>
+/* Base hiding for language content */
+.lang-en, .lang-jp {
+  display: none;
+}
+
+/* Hide radio buttons */
+input[name="lang"] {
+  display: none;
+}
+
+/* Switcher container styling */
+.lang-switcher {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+/* Default label styling */
+.lang-switcher label {
+  padding: 8px 20px;
+  cursor: pointer;
+  background: #f6f8fa;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  font-weight: 600;
+  color: #24292f;
+  transition: all 0.2s ease;
+  font-size: 14px;
+}
+
+/* Active State Styling */
+#en:checked ~ .lang-switcher label[for="en"],
+#jp:checked ~ .lang-switcher label[for="jp"] {
+  background: #0969da;
+  color: #ffffff;
+  border-color: #0969da;
+}
+
+/* Display specific content based on checked radio */
+#en:checked ~ .lang-en,
+#jp:checked ~ .lang-jp {
+  display: block;
+}
+
+/* GitHub Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .lang-switcher label {
+    background: #21262d;
+    border-color: #30363d;
+    color: #c9d1d9;
+  }
+  #en:checked ~ .lang-switcher label[for="en"],
+  #jp:checked ~ .lang-switcher label[for="jp"] {
+    background: #1f6feb;
+    color: #ffffff;
+    border-color: #1f6feb;
+  }
+}
+</style>
+
 # 🚀 Nexus Connect
 
-<details>
-<summary>🇬🇧 English</summary>
+<input type="radio" name="lang" id="en" checked>
+<input type="radio" name="lang" id="jp">
+
+<div class="lang-switcher">
+  <label for="en">🇬🇧 English</label>
+  <label for="jp">🇯🇵 日本語</label>
+</div>
 
 ## 🌍 Brand New "Hello World."
-**Social Networking: Evolution through AI-Driven Authenticity.**
 
-Yesterday's "Hello World" was a static line of code. Today's "Hello World" is the spark of a new human connection. **Nexus Connect** redefines the first interaction at events by transforming cold introductions into a live, AI-mapped social ecosystem. We don't just help you meet people; we visualize the threads of potential friendship before you even speak.
+<div class="lang-en">
+
+For decades, "Hello World" has been a developer's first interaction with a machine. In the AI era, we redefine it as the machine facilitating **a human's first interaction with another human**. 
+
+Networking events and hackathons are full of brilliant people who hesitate to say "hello" because of social friction. **Nexus Connect** is a Brand New "Hello World" for human connection—an immersive, real-time platform that uses AI to eliminate awkwardness, instantly visualize relationships, and hand you the perfect conversation starter. It transforms a room of strangers into a living, interconnected network.
+
+</div>
+
+<div class="lang-jp">
+
+何十年もの間、「Hello World」は開発者が機械と交わす最初の言葉でした。AI時代において、私たちはこれを**「機械の力で促進される、人間同士の最初の挨拶」**として再定義します。
+
+ハッカソンやカンファレンスには優秀な人々が集まりますが、心理的ハードルにより「Hello」と言えないことが多々あります。**Nexus**は、人間関係構築のための全く新しい「Hello World」です。AIを用いて気まずさを排除し、リアルタイムで繋がりを可視化し、完璧な会話のきっかけを提供する没入型プラットフォームです。見知らぬ人々の集まりを、生き生きとしたネットワークへと変貌させます。
+
+</div>
 
 ## 🧠 Concept & Story
-Networking at professional events or hackathons often feels like a sequence of scripted, surface-level exchanges. We wanted to lower the "Activation Energy" of social interaction. 
 
-The motivation is simple: **Loneliness in a crowded room is a solvable engineering problem.** By using AI to analyze personas and D3.js to visualize the "Social Fabric" in real-time, we create a playground where curiosity outweighs social anxiety.
+<div class="lang-en">
+
+**Why this matters now:** Post-pandemic, we crave real-world connections but often lack the conversational bridge to initiate them. We built Nexus Connect to solve the "standing awkwardly near the snacks" problem. By offloading the cognitive load of finding common ground to Vertex AI, participants can bypass small talk and jump straight into meaningful, high-value conversations. It's a social catalyst designed for scale.
+
+</div>
+
+<div class="lang-jp">
+
+**なぜ今、これが必要なのか：** 私たちはリアルな繋がりを求めつつも、会話のきっかけを掴めずにいます。Nexusは、「会場の隅で気まずく立ち尽くす」という課題を解決するために生まれました。共通点を探すという認知的負荷をVertex AIに任せることで、参加者は表面的な会話を飛ばし、すぐに価値のある深い対話に入ることができます。スケールを前提に設計された、ソーシャルカタリスト（繋がりを加速する触媒）です。
+
+</div>
 
 ## 💡 What Makes This "Brand New"
-*   **The Vibe-to-Vector Paradigm**: Instead of static profiles, we use multimodal AI to turn a single selfie or a mood into a high-dimensional persona vector.
-*   **Live Social Fabric**: A real-time D3.js network graph that grows as people join, showing physical and intellectual proximity.
-*   **AI-Forged Identity**: Your "Animal Spirit" and personalized avatars (Nano-Banana) create a fun, low-pressure entry point into serious networking.
+
+<div class="lang-en">
+
+1. **Dual-View Architecture**: Separates the **Event Hall View** (a high-performance D3.js spatial network visualized on a large monitor) from the **Participant View** (a lightweight, Framer Motion-driven mobile UI).
+2. **Context-Aware Ice Breaking**: Not just matching tags. Gemini AI dynamically interrogates users based on their mood and generates exactly 3 bespoke conversation topics for every matched pair.
+3. **Real-Time Visual Feedback**: The moment a user completes onboarding, their node physically "drops" into the global D3.js network graph on the main screen, instantly tethering to their best matches.
+
+</div>
+
+<div class="lang-jp">
+
+1. **デュアルビュー・アーキテクチャ**：大型モニターに映し出される高性能なD3.js空間ネットワーク（Event Hall View）と、Framer Motion駆動の軽量なモバイルUI（Participant View）を分離。
+2. **コンテキスト連動型アイスブレイク**：単なるタグ付けマッチングではありません。Gemini AIがユーザーの気分に基づいて動的に質問を生成し、マッチしたペアごとに専用の話題を正確に3つ提供します。
+3. **リアルタイムな視覚的フィードバック**：参加が完了した瞬間、メイン画面のD3.jsネットワークグラフに自分のノードが「落下」し、最適な相手と瞬時に線で結ばれる圧倒的な体験。
+
+</div>
 
 ## 🛠️ Product Overview
-Nexus Connect is a dual-view social orchestration platform.
-*   **Event Hall View (Desktop)**: A stunning, real-time D3.js visualization of every participant and their emerging connections.
-*   **User View (Mobile)**: A seamless onboarding flow that uses Gemini to analyze your "vibe" and generates 3 custom ice-breaker topics for every match.
+
+<div class="lang-en">
+
+Nexus Connect is a real-time event visualization and AI matchmaking platform.
+
+- **Live Network Graph**: D3.js powered visualization handling real-time node forces.
+- **Dynamic AI Onboarding**: Vertex AI poses personalized questions to users upon joining.
+- **Smart Matchmaking**: Connects attendees based on multidimensional analysis.
+- **AI Name Cards**: Generates "Nano-Banana" customized animal avatars for a playful, memorable digital identity.
+
+</div>
+
+<div class="lang-jp">
+
+Nexusは、イベントのリアルタイム可視化とAIマッチングを行うプラットフォームです。
+
+- **ライブネットワークグラフ**：D3.jsによるリアルタイムな物理演算を用いたノード可視化。
+- **動的AIオンボーディング**：Vertex AIが参加時にパーソナライズされた質問を投げかけます。
+- **スマートマッチング**：多次元的な分析により、最適な参加者同士を繋ぎます。
+- **AIネームカード**：「Nano-Banana」を用いてパーソナライズされた動物アバターを生成し、遊び心のある印象的なデジタルアイデンティティを提供します。
+
+</div>
 
 ## 🎬 Demo Flow (CRITICAL)
-1.  **Host Entry**: The host opens the Hall View on a large screen, displaying a unique QR code.
-2.  **Participant Join**: Users scan the QR code to join the room on their phones.
-3.  **Vibe Selection**: Users choose between "Mood Mode" (emoji-based) or "Camera Mode" (AI-multimodal analysis).
-4.  **AI Ice-Breaking**: Gemini generates 3 tailored questions based on your persona.
-5.  **Persona Forging**: Upon answering, our AI "Forges" your final profile, assigning you a unique AI animal avatar.
-6.  **Social Graph**: Instantly, you appear on the big screen! Lines of "Affinity" connect you to the most compatible people in the room.
-7.  **Match Card**: Your phone displays your best matches with 3 AI-generated conversation topics to start the chat.
+
+<div class="lang-en">
+
+1. **Host Setup (Input)**: The presenter opens the Event Hall screen (Desktop). A glowing dark-mode D3.js canvas appears with a QR code for the session.
+2. **Participant Onboarding (Input)**: A user scans the QR code on their phone, opens the Web App (Mobile), inputs `#username`, and selects a `Mood`.
+3. **AI Interrogation (System)**: The backend (Cloud Run) triggers Vertex AI, instantly generating rapid-fire setup questions based on the user's initial input. The user submits answers.
+4. **The Magic Moment (Output)**: 
+   - **On the Big Screen**: A new node bursts into the D3.js graph, snapping connecting lines to 2-3 other highly compatible attendees in the room via Firestore real-time listeners.
+   - **On the Phone**: A beautifully animated Digital Name Card drops down, revealing the matched partner's location, a bespoke Nano-Banana animal avatar, and **3 Gemini-generated conversation topics**.
+
+</div>
+
+<div class="lang-jp">
+
+1. **ホストのセットアップ（入力）**：プレゼンターがEvent Hall画面（PC）を開きます。ダークモードで光るD3.jsキャンバスと参加用QRコードが表示されます。
+2. **参加者オンボーディング（入力）**：ユーザーがスマホでQRコードを読み取り、Webアプリを開いて「名前」と「今の気分」を入力します。
+3. **AIインタビュアー（システム）**：バックエンド（Cloud Run）がVertex AIを呼び出し、初期入力に基づく質問を即座に生成。ユーザーがそれに回答します。
+4. **マジック・モーメント（出力）**：
+   - **巨大スクリーン上**：D3.jsグラフに新しいノードが弾け飛び、Firestoreのリアルタイム同期により、会場にいる相性の良い2～3人の参加者と瞬時に線で結ばれます。
+   - **スマホ上**：美しいアニメーションと共にデジタルネームカードが表示され、マッチした相手、Nano-Banana生成の動物アバター、そして**Geminiが生成した3つの会話のきっかけ**が提示されます。
+
+</div>
 
 ## ⚙️ Technical Architecture
-```mermaid
-graph TD
-    A[Mobile Client - Next.js] -->|Firestore| B(Real-time Database)
-    C[Hall View - D3.js] -->|Listen| B
-    D[Python Worker - Cloud Run] -->|Listen| B
-    D -->|Vertex AI| E[Gemini 2.5 Flash]
-    E -->|Analyze & Match| D
-    D -->|Update Result| B
+
+<div class="lang-en">
+
+```text
+[ Mobile UI (Next.js/React) ] --- (Firestore Real-time Sync) --- [ Event Hall UI (D3.js/React) ]
+                 \                                                /
+            (State: "waiting_for_ai")                     (State: "ready")
+                   \                                            /
+                    \------ [ Cloud Run (Worker) ] ------------/
+                                  |         |
+                           (Vertex AI)  (Nano-Banana API)
 ```
-*   **Frontend**: React/Next.js, Tailwind CSS, Framer Motion.
-    *   **Backend**: Python FastAPI (Cloud Run) orchestrating AI logic.
-    *   **Infrastucture**: Google Cloud Platform (Firestore, Firebase Storage, Cloud Run).
+- **Frontend**: Next.js (App Router), React, TailwindCSS, Framer Motion. D3.js isolates heavy DOM manipulations to prevent React conflicts.
+- **Backend / DB**: Firebase Firestore handles state machine transitions. Cloud Run processes AI payloads asynchronously.
+
+</div>
+
+<div class="lang-jp">
+
+```text
+[ スマホUI (Next.js/React) ] --- (Firestore リアルタイム同期) --- [ 会場UI (D3.js/React) ]
+                 \                                                /
+            (状態: "waiting_for_ai")                        (状態: "ready")
+                   \                                            /
+                    \------ [ Cloud Run (ワーカー) ]------------/
+                                  |         |
+                           (Vertex AI)  (Nano-Banana API)
+```
+- **フロントエンド**: Next.js (App Router), React, TailwindCSS, Framer Motion。D3.jsはReactとの競合を避けるため、DOM操作を分離してパフォーマンスを確保しています。
+- **バックエンド / DB**: Firebase Firestoreが状態遷移（ステートマシン）を管理し、Cloud Runが重いAI処理を非同期で実行します。
+
+</div>
 
 ## 🤖 Google Tech Usage (VERY IMPORTANT)
-*   **Gemini 2.5 Flash (Vertex AI)**: Used for high-speed, multimodal vibe analysis and profile forging. It's not just a chatbot; it's our "Social Engine" calculating affinity scores.
-*   **Cloud Run**: Provides serverless, auto-scaling power for our Python worker that processes global matching algorithms.
-*   **Firestore**: The backbone of the real-time experience. Every data join in D3.js is powered by a Firestore listener, ensuring sub-second updates to the social graph.
+
+<div class="lang-en">
+
+We integrated Google tech because of strictly enforced architectural constraints, not just for API calls.
+
+- **Vertex AI (Gemini 1.5 Flash)**: Essential for extracting structural data from unstructured user answers. We don't just ask for text; we demand strict JSON schema compliance to parse and route the 3 specific conversation topics back to the frontend without breaking the app.
+- **Firebase Firestore**: We rely heavily on sub-collections and real-time listeners. Our 5-stage state machine (`generating_questions` → `answering` → `waiting_for_ai` → `ready`) is entirely Firestore-driven, allowing the React UI to be completely stateless and purely reactive.
+- **Google Cloud Run**: Using serverless containers ensures that computationally heavy AI generations do not block the real-time Event Hall view. This enables horizontal scaling if 500 people scan the QR code at the exact same moment.
+
+</div>
+
+<div class="lang-jp">
+
+単なるAPI呼び出しではなく、アーキテクチャ上の必然性からGoogleの技術を深く統合しています。
+
+- **Vertex AI (Gemini 1.5 Flash)**：ユーザーの非定型な回答から構造化データを抽出するために不可欠です。単なるテキストではなく、厳密なJSONスキーマでの出力を要求し、アプリをクラッシュさせることなく3つの固有の話題をフロントエンドに確実に戻します。
+- **Firebase Firestore**：サブコレクションとリアルタイムリスナーを極限まで活用。5段階のステートマシン（`generating_questions` → `answering` → `waiting_for_ai` → `ready`）は完全にFirestore駆動であり、React UIを完全にステートレスかつリアクティブに保ちます。
+- **Google Cloud Run**：サーバーレスコンテナを使用することで、重いAI生成処理がリアルタイムなEvent Hallビューをブロックしないようにしています。500人が同時にQRコードをスキャンしても、水平スケールで完璧に処理します。
+
+</div>
 
 ## 📈 Scalability & Robustness
-*   **Concurrency**: Our Python worker uses a threaded executor to handle multiple participant "forging" requests simultaneously.
-*   **Cleanup**: Automatic room lifecycle management ensures transient data is purged after the event.
-*   **Edge Cases**: Fallback avatars and "General" ice-breakers ensure the experience remains fluid even under high latency.
+
+<div class="lang-en">
+
+- **Load Handling**: By decoupling UI state from backend processing using Firestore as an event bus, the system smoothly handles simultaneous spikes (e.g., keynote finishes, everyone joins at once).
+- **Error Boundaries**: If Gemini times out or Nano-Banana fails, the state machine reverts to an `error` status, safely triggering a Framer Motion fallback UI without crashing the global D3 graph.
+
+</div>
+
+<div class="lang-jp">
+
+- **負荷耐久性**：Firestoreをイベントバスとして使用し、UIの状態管理とバックエンド処理を分離。基調講演の終了直後など、全員が同時にアクセスするスパイクにもスムーズに対応します。
+- **エラーハンドリング**：GeminiのタイムアウトやAPI障害が発生した場合、ステートマシンは`error`状態に移行。メインのD3グラフをクラッシュさせることなく、安全にFramer MotionのフォールバックUIを表示します。
+
+</div>
 
 ## 🌐 Deployment & Reproducibility
-1.  **Frontend**: Deployed on Firebase Hosting.
-    ```bash
-    npm run build && firebase deploy
-    ```
-2.  **Backend**: Deployed on Google Cloud Run.
-    ```bash
-    gcloud run deploy ice-breaker-backend --source .
-    ```
-3.  **Environment**: Requires `GEMINI_API_KEY` and Firebase config.
+
+<div class="lang-en">
+
+1. Clone the repository: `git clone https://github.com/kannch8765/IceBreaker.git`
+2. Install dependencies: `npm install`
+3. Set up `.env.local` with Firebase config and Google Cloud credentials.
+4. Run locally: `npm run dev`
+5. Visit `http://localhost:3000/hall` for the host view, and scan the QR with your phone.
+
+</div>
+
+<div class="lang-jp">
+
+1. リポジトリのクローン: `git clone https://github.com/kannch8765/IceBreaker.git`
+2. 依存関係のインストール: `npm install`
+3. `.env.local` に Firebase の設定と Google Cloud の認証情報を設定。
+4. ローカルで実行: `npm run dev`
+5. `http://localhost:3000/hall` にアクセスしてホスト画面を開き、スマホでQRコードを読み取ります。
+
+</div>
 
 ## 🧪 Technical Challenge & Difficulty
-*   **Real-time D3.js Data Joins**: Synchronizing a complex force-directed graph with a real-time database while maintaining 60FPS.
-*   **Multimodal Consistency**: Ensuring Gemini understands the "Vibe" of a photo and translates it into a stable personality vector (OCEAN).
+
+<div class="lang-en">
+
+The hardest challenge was **React vs. D3.js DOM governance**. D3 expects to mutate the DOM, while React expects pure state mapping. We built a custom bridging hook that allows Firestore streams to update specific D3 simulation nodes (alpha forces) seamlessly *without* triggering full React re-renders. Visually, nodes smoothly glide into place instead of snapping abruptly when a new user finishes their AI generation.
+
+</div>
+
+<div class="lang-jp">
+
+最大の技術的課題は、**ReactとD3.jsにおけるDOM管理の衝突**でした。D3は直接DOMを操作しますが、Reactは状態の純粋なマッピングを求めます。私たちは専用のブリッジフックを構築し、Reactの全体再レンダリングを引き起こすことなく、Firestoreのストリームが特定のD3シミュレーションノードに動的かつ滑らかに力を加えることを可能にしました。これにより、AI処理が完了したノードが突然出現するのではなく、美しく滑り込むような視覚体験が実現しています。
+
+</div>
 
 ## 🧬 “Outlier” Factor (異端性)
-We integrated **Nano-Banana** for generating personalized AI animal avatars. This adds a layer of "Digital Whimsy" that breaks the ice before a single word is spoken. The contrast between high-tech vector matching and playful animal spirits is our secret sauce.
+
+<div class="lang-en">
+
+Instead of uploading a selfie or picking a generic avatar, we use the obscure **Nano-Banana API** triggered by the user's Vertex AI output. This assigns every user a highly stylized, quirky, and personalized "Animal Persona" (e.g., "A cybernetic neon sloth wearing sunglasses"). It completely bypasses privacy concerns while guaranteeing that the result is an instant conversation piece.
+
+</div>
+
+<div class="lang-jp">
+
+自撮り写真をアップロードしたり、一般的なアバターを選ぶのではなく、Vertex AIの出力からマニアックな**Nano-Banana API**を呼び出しています。これにより、全員に超個性的で奇抜な「動物ペルソナ」（例：「サングラスをかけたサイバーパンクなネオン・ナマケモノ」など）が割り当てられます。プライバシーの懸念を完全に排除しつつ、それがそのまま「最初の会話のネタ」になるという強烈な異端性を持ち合わせています。
+
+</div>
 
 ## 🎯 Impact & Future Potential
-Nexus Connect turns any room into a community. From corporate retreats to international summits, we solve the "First Hello" problem. Future versions will include persistent persona tracking and LinkedIn/GitHub deep-integration.
 
-</details>
+<div class="lang-en">
 
-<details>
-<summary>🇯🇵 日本語</summary>
+**Impact**: Eliminates social friction at professional events.
+**Future**: Integrating LinkedIn API to allow the D3 graph to pull in professional histories, mapping not just "who is here," but "who you need to meet to raise your Series A." Nexus Connect can easily be licensed as a B2B SaaS for event organizers globally.
 
-## 🌍 真の「Hello World.」へ
-**AIが導くリアルタイム・ソーシャル・ネットワーク。**
+</div>
 
-かつての「Hello World」は、ただの1行のコードでした。今日の「Hello World」は、新しい繋がりの始まりです。**Nexus Connect**は、イベントでの初対面のハードルを下げ、人々をリアルタイムのAIソーシャル・エコシステムへと誘います。
+<div class="lang-jp">
 
-## 🧠 コンセプト ＆ ストーリー
-ハッカソンや交流会でのネットワーキングは、しばしば形式的で表面的な会話になりがちです。私たちは、この「社交の活性化エネルギー」を技術で下げたいと考えました。
+**インパクト**：ビジネスイベントにおける心理的摩擦を完全に排除します。
+**将来性**：LinkedIn APIを統合し、「誰がいるか」だけでなく「資金調達のために誰に会うべきか」までD3グラフで可視化可能。Nexusは、世界中のイベント主催者向けのB2B SaaSとして容易にライセンス展開できるポテンシャルを秘めています。
 
-モチベーションは極めてシンプルです。「人混みの中の孤独」はエンジニアリングで解決できる課題であるということ。AIでペルソナを分析し、D3.jsで「社会の織物」を可視化することで、不安よりも好奇心が勝る空間を作り出します。
+</div>
 
-## 💡 なぜ「Brand New（斬新）」なのか
-*   **Vibe-to-Vector パラダイム**: 静的なプロフィールの代わりに、自撮り写真や今の気分を多モーダルAIが分析し、高次元のペルソナベクトルへ変換します。
-*   **ライブ・ソーシャル・ファブリック**: D3.jsを用いたリアルタイム・ネットワーク・グラフが、参加者が加わるたびに巨大なソーシャル空間として成長。
-*   **AIが鍛え上げるアイデンティティ**: あなたの「アニマル・スピリット」とパーソナライズされたアバター（Nano-Banana）が、親しみやすい交流のきっかけを作ります。
+## 🙌 Team & Credits
 
-## 🛠️ プロダクト概要
-Nexus Connectは、二つの視点を持つソーシャル・プラットフォームです。
-*   **イベント・ホール・ビュー（デスクトップ）**: 大型スクリーンに映し出される、Firestore同期のD3.jsネットワーク・ビジュアライゼーション。
-*   **ユーザー・ビュー（モバイル）**: Geminiがあなたの「バイブス」を分析し、マッチング相手ごとに3つの専用の「アイスブレーク・トピック」を生成するシームレスな参加フロー。
+<div class="lang-en">
 
-## 🎬 デモ・フロー
-1.  **ホストの参加**: スクリーンに大きく表示されたQRコードでルームを開設。
-2.  **参加者のジョイン**: スマホでQRをスキャンして入室。
-3.  **気分の選択**: 「今の気分（絵文字）」または「カメラ（AI分析）」から自分を表現。
-4.  **AIアイスブレーク**: Geminiがあなたの性格に基づいた3つの深掘り質問を生成。
-5.  **ペルソナ形成**: 質問に答えると、AIが専用のアニマル・アバターを生成。
-6.  **ソーシャル・グラフ**: 瞬時にあなたのアイコンが大画面に出現！最も相性の良い相手と「親和性」のラインで結ばれます。
-7.  **マッチ・カード**: スマホに表示されたおすすめの相手と、AIが考案した3つの話題で会話をスタート。
+- **Lead Engineer & Creative Technologist**: [Your Name/Handle]
+- Thanks to the open-source communities behind D3.js and Framer Motion. 
+- Powered by Google Cloud & Vertex AI.
 
-## ⚙️ 技術アーキテクチャ
-*   **Frontend**: React/Next.js, Tailwind CSS, Framer Motion.
-*   **Backend**: Python FastAPI (Cloud Run), Gemini 2.5 FlashによるAIロジックの実行。
-*   **Infra**: Google Cloud (Firestore, Firebase Storage, Cloud Run).
+</div>
 
-## 🤖 Google テクノロジーの活用
-*   **Gemini 2.5 Flash (Vertex AI)**: 高速かつ多モーダルな分析により、ユーザーの「オーラ」を数値化（親和性スコアの算出）。
-*   **Cloud Run**: マッチング・アルゴリズムを処理するPythonワーカーを、サーバーレスで自動スケーリング。
-*   **Firestore**: ネットワーク・グラフの秒速更新を支えるリアルタイム・リスナーのバックボーン。
+<div class="lang-jp">
 
-## 📈 拡張性と堅牢性
-*   **並列処理**: Pythonワーカーのマルチスレッド・エグゼキューターにより、多人数同時参加でも遅滞なくプロファイリング。
-*   **クリーンアップ**: イベント終了後に一時データを自動削除するライフサイクル管理。
+- **リードエンジニア ＆ クリエイティブテクノロジスト**: [お名前/ハンドルネーム]
+- D3.js および Framer Motion のオープンソースコミュニティに感謝します。
+- Powered by Google Cloud & Vertex AI.
 
-## 🌐 デプロイ ＆ 再現性
-1.  **Frontend**: Firebase Hostingへデプロイ。
-2.  **Backend**: Google Cloud Runへデプロイ。
-3.  **環境設定**: `GEMINI_API_KEY` と Firebase設定が必要です。
-
-## 🧪 テクニカル・チャレンジ
-*   **リアルタイム D3.js データジョイン**: 複雑な力学グラフとリアルタイムDBを、60FPSを維持しながら同期。
-*   **多モーダルな一貫性**: 写真から「バイブス」を読み取り、安定した性格ベクトル（OCEANモデル）へ変換する精度。
-
-## 🧬 「Outlier（異端）」要素
-**Nano-Banana** を統合し、AIがパーソナライズされた動物アバターを生成。この「デジタルな遊び心」が、最初の言葉を交わす前の緊張を解きほぐします。最先端のベクトルマッチングと遊び心あるアニマル・スピリットの対比こそが、私たちの最大の特徴です。
-
-## 🎯 インパクト ＆ 将来性
-Nexus Connectは、あらゆる場所をコミュニティに変えます。企業研修から国際会議まで、「最初の一言」の悩みを解決。将来はLinkedInやGitHubとの連携も視野に入れています。
-
-</details>
+</div>
